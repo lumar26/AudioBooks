@@ -8,6 +8,7 @@
     <artifactId>audio-books</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
     <modules>
         <module>lib</module>
         <module>peer</module>
@@ -15,7 +16,8 @@
     </modules>
 
     <properties>
-        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
 

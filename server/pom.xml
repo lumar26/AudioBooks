@@ -11,10 +11,6 @@
 
     <artifactId>server</artifactId>
 
-    <properties>
-        <java.version>11</java.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>rs.ac.bg.fon.mmklab</groupId>
@@ -23,17 +19,6 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <configuration>
-                    <release>11</release>  <!--or <release>10</release>-->
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
 
 </project>

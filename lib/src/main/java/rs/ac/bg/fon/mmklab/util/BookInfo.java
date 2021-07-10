@@ -1,4 +1,4 @@
-package util;
+package rs.ac.bg.fon.mmklab.util;
 
 import java.util.List;
 

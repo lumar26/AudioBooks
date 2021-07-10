@@ -1,6 +1,6 @@
 package rs.ac.bg.fon.mmklab.app.server;
 
-import util.AudioBook;
+import rs.ac.bg.fon.mmklab.util.AudioBook;
 
 import java.net.InetAddress;
 import java.net.Socket;
