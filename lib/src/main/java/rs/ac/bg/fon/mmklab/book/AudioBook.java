@@ -1,9 +1,16 @@
-package rs.ac.bg.fon.mmklab.util;
+package rs.ac.bg.fon.mmklab.book;
 
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonSerialize
 public class AudioBook {
     private AudioDescription audioDescription;
     private BookInfo bookInfo;
     private BookOwner bookOwner;
+
+    public AudioBook() {
+    }
 
     public AudioBook(AudioDescription audioDescription, BookInfo bookInfo, BookOwner bookOwner) {
         this.audioDescription = audioDescription;
@@ -33,5 +40,10 @@ public class AudioBook {
 
     public void setAudioDescription(AudioDescription audioDescription) {
         this.audioDescription = audioDescription;
+    }
+
+    @Override
+    public String toString() {
+        return "\nAudioBook:" + this.audioDescription.toString() + this.bookInfo.toString() + this.bookOwner.toString();
     }
 }

@@ -1,12 +1,15 @@
-package rs.ac.bg.fon.mmklab.app.server;
+package rs.ac.bg.fon.mmklab.server;
 
-import rs.ac.bg.fon.mmklab.util.AudioBook;
+import rs.ac.bg.fon.mmklab.book.AudioBook;
 
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
 
-public class ClientHandler extends Thread {
+public class
+
+
+ClientHandler extends Thread {
     Socket communicationSocket;
     private InetAddress clientAddress;
     private List<AudioBook> booksAvailable;

@@ -1,6 +1,6 @@
-package rs.ac.bg.fon.mmklab.app.server;
+package rs.ac.bg.fon.mmklab.server;
 
-import rs.ac.bg.fon.mmklab.util.AudioBook;
+import rs.ac.bg.fon.mmklab.book.AudioBook;
 
 import java.io.IOException;
 import java.net.ServerSocket;
