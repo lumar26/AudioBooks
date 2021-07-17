@@ -1,4 +1,4 @@
-package rs.ac.bg.fon.mmklab.peer.service.service_utils;
+package rs.ac.bg.fon.mmklab.peer.service.util;
 
 import rs.ac.bg.fon.mmklab.book.AudioBook;
 import rs.ac.bg.fon.mmklab.book.AudioDescription;
@@ -38,7 +38,7 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
             List<File> filesInDirectory = Files.walk(pathToBooksFolder, FOLLOW_LINKS).
                     map(path -> new File(path.toString()))
                     .collect(Collectors.toList());
-            System.out.println("(fetchBooks): velicina liste: " + filesInDirectory.size());
+            System.out.println("(fetchBooks): velicina liste: " + filesInDirectory.size() + ", racuna se i folder u kom se nalaze knjige");
             filesInDirectory.forEach(file -> file.toString());
 
 //            izbacujemo sve fajlove koji nisu u zadatom formatu, pretpostavka je da ce svi fajlovi bit u istom formatu: .wav

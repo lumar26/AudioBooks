@@ -1,0 +1,540 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "array",
+  "title": "The root schema",
+  "description": "The root schema comprises the entire JSON document.",
+  "default": [],
+  "examples": [
+    [
+      {
+        "audioDescription": {
+          "audioInputStream": {
+            "format": {
+              "encoding": {},
+              "sampleRate": 48000.0,
+              "sampleSizeInBits": 16,
+              "channels": 2,
+              "frameSize": 4,
+              "frameRate": 48000.0,
+              "bigEndian": false
+            },
+            "frameLength": 9974767
+          },
+          "audioFormat": {
+            "encoding": {},
+            "sampleRate": 48000.0,
+            "sampleSizeInBits": 16,
+            "channels": 2,
+            "frameSize": 4,
+            "frameRate": 48000.0,
+            "bigEndian": false
+          },
+          "lengthInFrames": 9974767,
+          "frameSizeInBytes": 4
+        },
+        "bookInfo": {
+          "name": "Naši dani",
+          "author": "Vladislav Petković Dis"
+        },
+        "bookOwner": {
+          "ipAddress": "localhost",
+          "port": 5005,
+          "online": true
+        }
+      },
+      {
+        "audioDescription": {
+          "audioInputStream": {
+            "format": {
+              "encoding": {},
+              "sampleRate": 44100.0,
+              "sampleSizeInBits": 16,
+              "channels": 2,
+              "frameSize": 4,
+              "frameRate": 44100.0,
+              "bigEndian": false
+            },
+            "frameLength": 105622528
+          },
+          "audioFormat": {
+            "encoding": {},
+            "sampleRate": 44100.0,
+            "sampleSizeInBits": 16,
+            "channels": 2,
+            "frameSize": 4,
+            "frameRate": 44100.0,
+            "bigEndian": false
+          },
+          "lengthInFrames": 105622528,
+          "frameSizeInBytes": 4
+        },
+        "bookInfo": {
+          "name": "Bedni ljudi",
+          "author": "Fjodor Mihailovič Dostojevski"
+        },
+        "bookOwner": {
+          "ipAddress": "localhost",
+          "port": 5005,
+          "online": true
+        }
+      }
+    ]
+  ],
+  "additionalItems": true,
+  "items": {
+    "$id": "#/items",
+    "anyOf": [
+      {
+        "$id": "#/items/anyOf/0",
+        "type": "object",
+        "title": "The first anyOf schema",
+        "description": "An explanation about the purpose of this instance.",
+        "default": {},
+        "examples": [
+          {
+            "audioDescription": {
+              "audioInputStream": {
+                "format": {
+                  "encoding": {},
+                  "sampleRate": 48000.0,
+                  "sampleSizeInBits": 16,
+                  "channels": 2,
+                  "frameSize": 4,
+                  "frameRate": 48000.0,
+                  "bigEndian": false
+                },
+                "frameLength": 9974767
+              },
+              "audioFormat": {
+                "encoding": {},
+                "sampleRate": 48000.0,
+                "sampleSizeInBits": 16,
+                "channels": 2,
+                "frameSize": 4,
+                "frameRate": 48000.0,
+                "bigEndian": false
+              },
+              "lengthInFrames": 9974767,
+              "frameSizeInBytes": 4
+            },
+            "bookInfo": {
+              "name": "Naši dani",
+              "author": "Vladislav Petković Dis"
+            },
+            "bookOwner": {
+              "ipAddress": "localhost",
+              "port": 5005,
+              "online": true
+            }
+          }
+        ],
+        "required": [
+          "audioDescription",
+          "bookInfo",
+          "bookOwner"
+        ],
+        "properties": {
+          "audioDescription": {
+            "$id": "#/items/anyOf/0/properties/audioDescription",
+            "type": "object",
+            "title": "The audioDescription schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "audioInputStream": {
+                  "format": {
+                    "encoding": {},
+                    "sampleRate": 48000.0,
+                    "sampleSizeInBits": 16,
+                    "channels": 2,
+                    "frameSize": 4,
+                    "frameRate": 48000.0,
+                    "bigEndian": false
+                  },
+                  "frameLength": 9974767
+                },
+                "audioFormat": {
+                  "encoding": {},
+                  "sampleRate": 48000.0,
+                  "sampleSizeInBits": 16,
+                  "channels": 2,
+                  "frameSize": 4,
+                  "frameRate": 48000.0,
+                  "bigEndian": false
+                },
+                "lengthInFrames": 9974767,
+                "frameSizeInBytes": 4
+              }
+            ],
+            "required": [
+              "audioInputStream",
+              "audioFormat",
+              "lengthInFrames",
+              "frameSizeInBytes"
+            ],
+            "properties": {
+              "audioInputStream": {
+                "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream",
+                "type": "object",
+                "title": "The audioInputStream schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": {},
+                "examples": [
+                  {
+                    "format": {
+                      "encoding": {},
+                      "sampleRate": 48000.0,
+                      "sampleSizeInBits": 16,
+                      "channels": 2,
+                      "frameSize": 4,
+                      "frameRate": 48000.0,
+                      "bigEndian": false
+                    },
+                    "frameLength": 9974767
+                  }
+                ],
+                "required": [
+                  "format",
+                  "frameLength"
+                ],
+                "properties": {
+                  "format": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format",
+                    "type": "object",
+                    "title": "The format schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                      {
+                        "encoding": {},
+                        "sampleRate": 48000.0,
+                        "sampleSizeInBits": 16,
+                        "channels": 2,
+                        "frameSize": 4,
+                        "frameRate": 48000.0,
+                        "bigEndian": false
+                      }
+                    ],
+                    "required": [
+                      "encoding",
+                      "sampleRate",
+                      "sampleSizeInBits",
+                      "channels",
+                      "frameSize",
+                      "frameRate",
+                      "bigEndian"
+                    ],
+                    "properties": {
+                      "encoding": {
+                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/encoding",
+                        "type": "object",
+                        "title": "The encoding schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": {},
+                        "examples": [
+                          {}
+                        ],
+                        "required": [],
+                        "additionalProperties": true
+                      },
+                      "sampleRate": {
+                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/sampleRate",
+                        "type": "number",
+                        "title": "The sampleRate schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": 0.0,
+                        "examples": [
+                          48000.0
+                        ]
+                      },
+                      "sampleSizeInBits": {
+                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/sampleSizeInBits",
+                        "type": "integer",
+                        "title": "The sampleSizeInBits schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": 0,
+                        "examples": [
+                          16
+                        ]
+                      },
+                      "channels": {
+                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/channels",
+                        "type": "integer",
+                        "title": "The channels schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": 0,
+                        "examples": [
+                          2
+                        ]
+                      },
+                      "frameSize": {
+                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/frameSize",
+                        "type": "integer",
+                        "title": "The frameSize schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": 0,
+                        "examples": [
+                          4
+                        ]
+                      },
+                      "frameRate": {
+                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/frameRate",
+                        "type": "number",
+                        "title": "The frameRate schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": 0.0,
+                        "examples": [
+                          48000.0
+                        ]
+                      },
+                      "bigEndian": {
+                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/bigEndian",
+                        "type": "boolean",
+                        "title": "The bigEndian schema",
+                        "description": "An explanation about the purpose of this instance.",
+                        "default": false,
+                        "examples": [
+                          false
+                        ]
+                      }
+                    },
+                    "additionalProperties": true
+                  },
+                  "frameLength": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/frameLength",
+                    "type": "integer",
+                    "title": "The frameLength schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                      9974767
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              },
+              "audioFormat": {
+                "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat",
+                "type": "object",
+                "title": "The audioFormat schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": {},
+                "examples": [
+                  {
+                    "encoding": {},
+                    "sampleRate": 48000.0,
+                    "sampleSizeInBits": 16,
+                    "channels": 2,
+                    "frameSize": 4,
+                    "frameRate": 48000.0,
+                    "bigEndian": false
+                  }
+                ],
+                "required": [
+                  "encoding",
+                  "sampleRate",
+                  "sampleSizeInBits",
+                  "channels",
+                  "frameSize",
+                  "frameRate",
+                  "bigEndian"
+                ],
+                "properties": {
+                  "encoding": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/encoding",
+                    "type": "object",
+                    "title": "The encoding schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": {},
+                    "examples": [
+                      {}
+                    ],
+                    "required": [],
+                    "additionalProperties": true
+                  },
+                  "sampleRate": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/sampleRate",
+                    "type": "number",
+                    "title": "The sampleRate schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0.0,
+                    "examples": [
+                      48000.0
+                    ]
+                  },
+                  "sampleSizeInBits": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/sampleSizeInBits",
+                    "type": "integer",
+                    "title": "The sampleSizeInBits schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                      16
+                    ]
+                  },
+                  "channels": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/channels",
+                    "type": "integer",
+                    "title": "The channels schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                      2
+                    ]
+                  },
+                  "frameSize": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameSize",
+                    "type": "integer",
+                    "title": "The frameSize schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                      4
+                    ]
+                  },
+                  "frameRate": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameRate",
+                    "type": "number",
+                    "title": "The frameRate schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0.0,
+                    "examples": [
+                      48000.0
+                    ]
+                  },
+                  "bigEndian": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/bigEndian",
+                    "type": "boolean",
+                    "title": "The bigEndian schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                      false
+                    ]
+                  }
+                },
+                "additionalProperties": true
+              },
+              "lengthInFrames": {
+                "$id": "#/items/anyOf/0/properties/audioDescription/properties/lengthInFrames",
+                "type": "integer",
+                "title": "The lengthInFrames schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0,
+                "examples": [
+                  9974767
+                ]
+              },
+              "frameSizeInBytes": {
+                "$id": "#/items/anyOf/0/properties/audioDescription/properties/frameSizeInBytes",
+                "type": "integer",
+                "title": "The frameSizeInBytes schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0,
+                "examples": [
+                  4
+                ]
+              }
+            },
+            "additionalProperties": true
+          },
+          "bookInfo": {
+            "$id": "#/items/anyOf/0/properties/bookInfo",
+            "type": "object",
+            "title": "The bookInfo schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "name": "Naši dani",
+                "author": "Vladislav Petković Dis"
+              }
+            ],
+            "required": [
+              "name",
+              "author"
+            ],
+            "properties": {
+              "name": {
+                "$id": "#/items/anyOf/0/properties/bookInfo/properties/name",
+                "type": "string",
+                "title": "The name schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "Naši dani"
+                ]
+              },
+              "author": {
+                "$id": "#/items/anyOf/0/properties/bookInfo/properties/author",
+                "type": "string",
+                "title": "The author schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "Vladislav Petković Dis"
+                ]
+              }
+            },
+            "additionalProperties": true
+          },
+          "bookOwner": {
+            "$id": "#/items/anyOf/0/properties/bookOwner",
+            "type": "object",
+            "title": "The bookOwner schema",
+            "description": "An explanation about the purpose of this instance.",
+            "default": {},
+            "examples": [
+              {
+                "ipAddress": "localhost",
+                "port": 5005,
+                "online": true
+              }
+            ],
+            "required": [
+              "ipAddress",
+              "port",
+              "online"
+            ],
+            "properties": {
+              "ipAddress": {
+                "$id": "#/items/anyOf/0/properties/bookOwner/properties/ipAddress",
+                "type": "string",
+                "title": "The ipAddress schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": "",
+                "examples": [
+                  "localhost"
+                ]
+              },
+              "port": {
+                "$id": "#/items/anyOf/0/properties/bookOwner/properties/port",
+                "type": "integer",
+                "title": "The port schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": 0,
+                "examples": [
+                  5005
+                ]
+              },
+              "online": {
+                "$id": "#/items/anyOf/0/properties/bookOwner/properties/online",
+                "type": "boolean",
+                "title": "The online schema",
+                "description": "An explanation about the purpose of this instance.",
+                "default": false,
+                "examples": [
+                  true
+                ]
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": true
+      }
+    ]
+  }
+}
