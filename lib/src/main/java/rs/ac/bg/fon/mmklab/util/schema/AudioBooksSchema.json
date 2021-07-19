@@ -9,26 +9,14 @@
     [
       {
         "audioDescription": {
-          "audioInputStream": {
-            "format": {
-              "encoding": {},
-              "sampleRate": 48000.0,
-              "sampleSizeInBits": 16,
-              "channels": 2,
-              "frameSize": 4,
-              "frameRate": 48000.0,
-              "bigEndian": false
-            },
-            "frameLength": 9974767
-          },
           "audioFormat": {
-            "encoding": {},
-            "sampleRate": 48000.0,
-            "sampleSizeInBits": 16,
+            "bigEndian": false,
             "channels": 2,
-            "frameSize": 4,
+            "encoding": "PCM_SIGNED",
             "frameRate": 48000.0,
-            "bigEndian": false
+            "frameSize": 4,
+            "sampleRate": 48000.0,
+            "sampleSizeInBits": 16
           },
           "lengthInFrames": 9974767,
           "frameSizeInBytes": 4
@@ -45,26 +33,14 @@
       },
       {
         "audioDescription": {
-          "audioInputStream": {
-            "format": {
-              "encoding": {},
-              "sampleRate": 44100.0,
-              "sampleSizeInBits": 16,
-              "channels": 2,
-              "frameSize": 4,
-              "frameRate": 44100.0,
-              "bigEndian": false
-            },
-            "frameLength": 105622528
-          },
           "audioFormat": {
-            "encoding": {},
-            "sampleRate": 44100.0,
-            "sampleSizeInBits": 16,
+            "bigEndian": false,
             "channels": 2,
-            "frameSize": 4,
+            "encoding": "PCM_SIGNED",
             "frameRate": 44100.0,
-            "bigEndian": false
+            "frameSize": 4,
+            "sampleRate": 44100.0,
+            "sampleSizeInBits": 16
           },
           "lengthInFrames": 105622528,
           "frameSizeInBytes": 4
@@ -94,26 +70,14 @@
         "examples": [
           {
             "audioDescription": {
-              "audioInputStream": {
-                "format": {
-                  "encoding": {},
-                  "sampleRate": 48000.0,
-                  "sampleSizeInBits": 16,
-                  "channels": 2,
-                  "frameSize": 4,
-                  "frameRate": 48000.0,
-                  "bigEndian": false
-                },
-                "frameLength": 9974767
-              },
               "audioFormat": {
-                "encoding": {},
-                "sampleRate": 48000.0,
-                "sampleSizeInBits": 16,
+                "bigEndian": false,
                 "channels": 2,
-                "frameSize": 4,
+                "encoding": "PCM_SIGNED",
                 "frameRate": 48000.0,
-                "bigEndian": false
+                "frameSize": 4,
+                "sampleRate": 48000.0,
+                "sampleSizeInBits": 16
               },
               "lengthInFrames": 9974767,
               "frameSizeInBytes": 4
@@ -143,178 +107,25 @@
             "default": {},
             "examples": [
               {
-                "audioInputStream": {
-                  "format": {
-                    "encoding": {},
-                    "sampleRate": 48000.0,
-                    "sampleSizeInBits": 16,
-                    "channels": 2,
-                    "frameSize": 4,
-                    "frameRate": 48000.0,
-                    "bigEndian": false
-                  },
-                  "frameLength": 9974767
-                },
                 "audioFormat": {
-                  "encoding": {},
-                  "sampleRate": 48000.0,
-                  "sampleSizeInBits": 16,
+                  "bigEndian": false,
                   "channels": 2,
-                  "frameSize": 4,
+                  "encoding": "PCM_SIGNED",
                   "frameRate": 48000.0,
-                  "bigEndian": false
+                  "frameSize": 4,
+                  "sampleRate": 48000.0,
+                  "sampleSizeInBits": 16
                 },
                 "lengthInFrames": 9974767,
                 "frameSizeInBytes": 4
               }
             ],
             "required": [
-              "audioInputStream",
               "audioFormat",
               "lengthInFrames",
               "frameSizeInBytes"
             ],
             "properties": {
-              "audioInputStream": {
-                "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream",
-                "type": "object",
-                "title": "The audioInputStream schema",
-                "description": "An explanation about the purpose of this instance.",
-                "default": {},
-                "examples": [
-                  {
-                    "format": {
-                      "encoding": {},
-                      "sampleRate": 48000.0,
-                      "sampleSizeInBits": 16,
-                      "channels": 2,
-                      "frameSize": 4,
-                      "frameRate": 48000.0,
-                      "bigEndian": false
-                    },
-                    "frameLength": 9974767
-                  }
-                ],
-                "required": [
-                  "format",
-                  "frameLength"
-                ],
-                "properties": {
-                  "format": {
-                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format",
-                    "type": "object",
-                    "title": "The format schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": {},
-                    "examples": [
-                      {
-                        "encoding": {},
-                        "sampleRate": 48000.0,
-                        "sampleSizeInBits": 16,
-                        "channels": 2,
-                        "frameSize": 4,
-                        "frameRate": 48000.0,
-                        "bigEndian": false
-                      }
-                    ],
-                    "required": [
-                      "encoding",
-                      "sampleRate",
-                      "sampleSizeInBits",
-                      "channels",
-                      "frameSize",
-                      "frameRate",
-                      "bigEndian"
-                    ],
-                    "properties": {
-                      "encoding": {
-                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/encoding",
-                        "type": "object",
-                        "title": "The encoding schema",
-                        "description": "An explanation about the purpose of this instance.",
-                        "default": {},
-                        "examples": [
-                          {}
-                        ],
-                        "required": [],
-                        "additionalProperties": true
-                      },
-                      "sampleRate": {
-                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/sampleRate",
-                        "type": "number",
-                        "title": "The sampleRate schema",
-                        "description": "An explanation about the purpose of this instance.",
-                        "default": 0.0,
-                        "examples": [
-                          48000.0
-                        ]
-                      },
-                      "sampleSizeInBits": {
-                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/sampleSizeInBits",
-                        "type": "integer",
-                        "title": "The sampleSizeInBits schema",
-                        "description": "An explanation about the purpose of this instance.",
-                        "default": 0,
-                        "examples": [
-                          16
-                        ]
-                      },
-                      "channels": {
-                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/channels",
-                        "type": "integer",
-                        "title": "The channels schema",
-                        "description": "An explanation about the purpose of this instance.",
-                        "default": 0,
-                        "examples": [
-                          2
-                        ]
-                      },
-                      "frameSize": {
-                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/frameSize",
-                        "type": "integer",
-                        "title": "The frameSize schema",
-                        "description": "An explanation about the purpose of this instance.",
-                        "default": 0,
-                        "examples": [
-                          4
-                        ]
-                      },
-                      "frameRate": {
-                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/frameRate",
-                        "type": "number",
-                        "title": "The frameRate schema",
-                        "description": "An explanation about the purpose of this instance.",
-                        "default": 0.0,
-                        "examples": [
-                          48000.0
-                        ]
-                      },
-                      "bigEndian": {
-                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/bigEndian",
-                        "type": "boolean",
-                        "title": "The bigEndian schema",
-                        "description": "An explanation about the purpose of this instance.",
-                        "default": false,
-                        "examples": [
-                          false
-                        ]
-                      }
-                    },
-                    "additionalProperties": true
-                  },
-                  "frameLength": {
-                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/frameLength",
-                    "type": "integer",
-                    "title": "The frameLength schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": 0,
-                    "examples": [
-                      9974767
-                    ]
-                  }
-                },
-                "additionalProperties": true
-              },
               "audioFormat": {
                 "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat",
                 "type": "object",
@@ -323,36 +134,74 @@
                 "default": {},
                 "examples": [
                   {
-                    "encoding": {},
-                    "sampleRate": 48000.0,
-                    "sampleSizeInBits": 16,
+                    "bigEndian": false,
                     "channels": 2,
-                    "frameSize": 4,
+                    "encoding": "PCM_SIGNED",
                     "frameRate": 48000.0,
-                    "bigEndian": false
+                    "frameSize": 4,
+                    "sampleRate": 48000.0,
+                    "sampleSizeInBits": 16
                   }
                 ],
                 "required": [
-                  "encoding",
-                  "sampleRate",
-                  "sampleSizeInBits",
+                  "bigEndian",
                   "channels",
-                  "frameSize",
+                  "encoding",
                   "frameRate",
-                  "bigEndian"
+                  "frameSize",
+                  "sampleRate",
+                  "sampleSizeInBits"
                 ],
                 "properties": {
+                  "bigEndian": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/bigEndian",
+                    "type": "boolean",
+                    "title": "The bigEndian schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": false,
+                    "examples": [
+                      false
+                    ]
+                  },
+                  "channels": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/channels",
+                    "type": "integer",
+                    "title": "The channels schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                      2
+                    ]
+                  },
                   "encoding": {
                     "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/encoding",
-                    "type": "object",
+                    "type": "string",
                     "title": "The encoding schema",
                     "description": "An explanation about the purpose of this instance.",
-                    "default": {},
+                    "default": "",
                     "examples": [
-                      {}
-                    ],
-                    "required": [],
-                    "additionalProperties": true
+                      "PCM_SIGNED"
+                    ]
+                  },
+                  "frameRate": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameRate",
+                    "type": "number",
+                    "title": "The frameRate schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0.0,
+                    "examples": [
+                      48000.0
+                    ]
+                  },
+                  "frameSize": {
+                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameSize",
+                    "type": "integer",
+                    "title": "The frameSize schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": 0,
+                    "examples": [
+                      4
+                    ]
                   },
                   "sampleRate": {
                     "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/sampleRate",
@@ -372,46 +221,6 @@
                     "default": 0,
                     "examples": [
                       16
-                    ]
-                  },
-                  "channels": {
-                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/channels",
-                    "type": "integer",
-                    "title": "The channels schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": 0,
-                    "examples": [
-                      2
-                    ]
-                  },
-                  "frameSize": {
-                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameSize",
-                    "type": "integer",
-                    "title": "The frameSize schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": 0,
-                    "examples": [
-                      4
-                    ]
-                  },
-                  "frameRate": {
-                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameRate",
-                    "type": "number",
-                    "title": "The frameRate schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": 0.0,
-                    "examples": [
-                      48000.0
-                    ]
-                  },
-                  "bigEndian": {
-                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/bigEndian",
-                    "type": "boolean",
-                    "title": "The bigEndian schema",
-                    "description": "An explanation about the purpose of this instance.",
-                    "default": false,
-                    "examples": [
-                      false
                     ]
                   }
                 },

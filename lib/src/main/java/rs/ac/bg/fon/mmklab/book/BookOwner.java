@@ -1,9 +1,13 @@
 package rs.ac.bg.fon.mmklab.book;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.io.Serializable;
 import java.net.InetAddress;
+import java.util.Objects;
 
-
-public class BookOwner {
+@JsonSerialize
+public class BookOwner implements Serializable {
     /*Par nekih opstih informacija mozemo da ubacimo, cisto radi prikazivanja*/
 //    private String name;
     /*Vlasnik knjige od informacija obavezno treba da ima IP adresu i port na kome osluskuje zahteve*/
@@ -54,5 +58,13 @@ public class BookOwner {
                 ", isOnline=" + isOnline +
                 ", port=" + port +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BookOwner)) return false;
+        BookOwner bookOwner = (BookOwner) o;
+        return getPort() == bookOwner.getPort() && isOnline() == bookOwner.isOnline() && getIpAddress().equals(bookOwner.getIpAddress());
     }
 }

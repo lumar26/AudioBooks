@@ -32,7 +32,7 @@ public class Server {
 
                 communicationSocket = receiveSocket.accept();
                 System.out.println("SERVER: connection established");
-                ClientHandler handler = new ClientHandler(communicationSocket);
+                ClientHandler handler = new ClientHandler(communicationSocket);  /// treba ovde try/catch
                 handlers.add(handler);
                 handler.start();
                 System.out.println("SERVER: connection activated, number of connections: " + handlers.size());
@@ -41,5 +41,16 @@ public class Server {
         } catch (IOException e) {
             System.err.println("ERROR: Could not open receive socket on given port");
         }
+    }
+
+    public static void updateAvailableBooks(List<AudioBook> newBooks) {
+        newBooks.forEach(book -> {
+            if(!availableBooks.contains(book))
+                availableBooks.add(book);
+        });
+    }
+
+    public static List<AudioBook> getAvailableBooks() {
+        return availableBooks;
     }
 }

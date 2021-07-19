@@ -1,9 +1,6 @@
 package rs.ac.bg.fon.mmklab.peer.service.util;
 
-import rs.ac.bg.fon.mmklab.book.AudioBook;
-import rs.ac.bg.fon.mmklab.book.AudioDescription;
-import rs.ac.bg.fon.mmklab.book.BookInfo;
-import rs.ac.bg.fon.mmklab.book.BookOwner;
+import rs.ac.bg.fon.mmklab.book.*;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -17,12 +14,6 @@ import java.util.stream.Collectors;
 import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
 public class BooksFinder extends SimpleFileVisitor<Path> {
-    /* Ova klasa sadrzi:
-     * 1. metodu koja na osnovu prosledjene putanje ka folderu vraca listu audio knjiga koje u njoj postoje
-     *
-     * 2. pomocnu metodu koja za svaki audio fajl kreira jedan objekat tipa AudioBook koja sadrzi osnovne informacije o knjizi
-     */
-
 
     public static List<AudioBook> fetchBooks(String booksFolder, String audioFormatExtension) {
         Path pathToBooksFolder = Paths.get(booksFolder);
@@ -121,7 +112,7 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
             lengthInFrames = audioInputStream.getFrameLength();
             frameSizeInBytes = audioFormat.getFrameSize();
         } catch (UnsupportedAudioFileException e) {
-//            ako u getAudioInputStyream prosledimo neodgovarajuci format fajla
+//            ako u getAudioInputStream prosledimo neodgovarajuci format fajla
             System.err.println("Greska (getAudioDescription): prosledjen je fajl koji nije audio");
 //            e.printStackTrace();
         } catch (IOException e) {
@@ -129,7 +120,7 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
             System.err.println("Greska (getAudioDescription): getAudioInputStream ne moze da povuce strim iz datog fajla");
 //            e.printStackTrace();
         }
-
-        return new AudioDescription(audioInputStream, audioFormat, lengthInFrames, frameSizeInBytes);
+//zbog nemoguce serijalizacije objekta tipa AudioFormat moramo da prebacujemo u custom-made klasu za cuvanje audio formata
+        return new AudioDescription(CustomAudioFormat.toCustom(audioFormat), lengthInFrames, frameSizeInBytes);
     }
 }

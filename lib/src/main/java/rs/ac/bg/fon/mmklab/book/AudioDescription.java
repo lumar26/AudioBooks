@@ -4,30 +4,27 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
+import java.io.Serializable;
+import java.util.Objects;
 
 @JsonSerialize
-public class AudioDescription {
-    private AudioInputStream audioInputStream;
-    private AudioFormat audioFormat;
+public class AudioDescription implements Serializable {
+    private CustomAudioFormat audioFormat;
     private long lengthInFrames;
     private int frameSizeInBytes;
 
     public AudioDescription() {
     }
 
-    public AudioDescription(AudioInputStream audioInputStream, AudioFormat audioFormat, long lengthInFrames, int frameSizeInBytes) {
-        this.audioInputStream = audioInputStream;
+    public AudioDescription(CustomAudioFormat audioFormat, long lengthInFrames, int frameSizeInBytes) {
         this.audioFormat = audioFormat;
         this.lengthInFrames = lengthInFrames;
         this.frameSizeInBytes = frameSizeInBytes;
     }
 
 
-    public AudioInputStream getAudioInputStream() {
-        return audioInputStream;
-    }
 
-    public AudioFormat getAudioFormat() {
+    public CustomAudioFormat getAudioFormat() {
         return audioFormat;
     }
 
@@ -40,11 +37,7 @@ public class AudioDescription {
     }
 
 
-    public void setAudioInputStream(AudioInputStream audioInputStream) {
-        this.audioInputStream = audioInputStream;
-    }
-
-    public void setAudioFormat(AudioFormat audioFormat) {
+    public void setAudioFormat(CustomAudioFormat audioFormat) {
         this.audioFormat = audioFormat;
     }
 
@@ -59,10 +52,18 @@ public class AudioDescription {
     @Override
     public String toString() {
         return "\nAudioDescription{" +
-                "audioInputStream=" + audioInputStream +
                 ", audioFormat=" + audioFormat +
                 ", lengthInFrames=" + lengthInFrames +
                 ", frameSizeInBytes=" + frameSizeInBytes +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AudioDescription)) return false;
+        AudioDescription that = (AudioDescription) o;
+        return getLengthInFrames() == that.getLengthInFrames() && getFrameSizeInBytes() == that.getFrameSizeInBytes() && Objects.equals(getAudioFormat(), that.getAudioFormat());
+    }
+
 }
