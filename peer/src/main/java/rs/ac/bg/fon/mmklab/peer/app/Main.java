@@ -3,20 +3,17 @@ package rs.ac.bg.fon.mmklab.peer.app;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import rs.ac.bg.fon.mmklab.communication.peer_to_server.ListExchanger;
+import rs.ac.bg.fon.mmklab.peer.app.components.request_books.RequestBooksTab;
 import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
 import rs.ac.bg.fon.mmklab.peer.service.server_communication.ServerCommunicator;
 import rs.ac.bg.fon.mmklab.peer.service.util.BooksFinder;
-import rs.ac.bg.fon.mmklab.book.AudioBook;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.util.List;
 
 public class Main extends Application {
 
@@ -25,41 +22,20 @@ public class Main extends Application {
     }
 /*
     String pathToFolder = "/home/lumar26/Public/AudioBooks", audioExtension = ".wav";
-
-    InetAddress serverAddress;
-
-    {
-        try {
-            serverAddress = InetAddress.getByName("localhost");
-        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-            System.err.println("Greska (MAIN): ne postoji localhost" );
-        }
-    }
-    int serverPort = 5005;*/
+*/
 
     private Configuration configuration;
 
     @Override
     public void start(Stage primaryStage) {
 
-        BorderPane requestBooksTabContent = new BorderPane();
-        Button sendRequestBtn = new Button("Get available books");
-        TextArea listOfBooksArea = new TextArea();
-        sendRequestBtn.setOnAction(action -> showAvailableBooks(listOfBooksArea));
-        requestBooksTabContent.setTop(sendRequestBtn);
-        requestBooksTabContent.setCenter(listOfBooksArea);
 
 
         TabPane root = new TabPane();
         root.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); //korisnik nema mogucnost da zatvori tab
 
-        Tab requestBooksTab = new Tab();
-        requestBooksTab.setText("Get available books list");
-        requestBooksTab.setContent(requestBooksTabContent);
-        if (requestBooksTab.isSelected()) {
-//            ako je fajl selektovan da odradimo da se automatski azurira lista knjiga
-        }
+
+
 
         Tab audioPlayerTab = new Tab();
         audioPlayerTab.setText("Audio player");
@@ -89,6 +65,7 @@ public class Main extends Application {
         Button submitBtn = new Button("Potvrdi");
         submitBtn.setOnAction(a -> {
             configuration = configurationFactory(serverNameTxt, serverPortTxt, audioExtensionTxt, pathToFolderTxt);
+            RequestBooksTab.updaTeConfiguration(configuration); // svaki put kad dodje do promene u knfiguraciji ona mora da se apdejtuje
 //            onog trenutka kad popunimo konfiguracije svakako cemo da saljemo serveru sve
             sendListOfBooks(configuration);
             clearInputContent(textFields);
@@ -101,7 +78,10 @@ public class Main extends Application {
         configTab.setContent(configLayout);
 
 //        dodavanje tabova na TabPane
-        root.getTabs().addAll(configTab, requestBooksTab, audioPlayerTab);
+//        root.getTabs().addAll(configTab, requestBooksTab, audioPlayerTab);
+        RequestBooksTab.display(root);
+        root.getTabs().addAll(configTab, audioPlayerTab);
+
 
         primaryStage.setTitle("Audio Books");
         primaryStage.setWidth(700);
@@ -134,25 +114,6 @@ public class Main extends Application {
 
     private void clearInputContent(VBox textFields){
         textFields.getChildren().forEach(field -> ((TextField) field).setText("")); // ovo je mozda rizicno ali ovde znamo da su tu sigurno samo ta polja za unos teksta
-    }
-
-    private void showAvailableBooks(TextArea listOfBooks) {
-        if(configuration == null){
-            System.err.println("Korisnik jos uvek nije odradio nikakvu konfiguraciju pa je nemoguce povuci listu knjiga sa servera");
-            return;
-        }
-        try {
-            ServerCommunicator communicator = ServerCommunicator
-                    .getInstance(InetAddress.getByName(configuration.getServerName()), configuration.getServerPort());
-            List<AudioBook> list = ListExchanger.getAvailableBooks(communicator.getStreamFromServer(), communicator.getStreamToServer());
-            list.forEach(book -> listOfBooks.appendText(book.getBookInfo().toString()));
-        } catch (IOException e) {
-//            e.printStackTrace();
-            System.err.println("Greska: nepoznat server");
-        }
-//        ovo sluzi za probu dok se ne implementira server
-        /*List<AudioBook>  list = BooksFinder.fetchBooks(pathToFolder, audioExtension);
-        list.forEach(book -> listOfBooks.appendText(book.getBookInfo().toString()));*/  // radi sve ok, lepo se prikazuje, samo treba da se zameni nacin na koji se prikazuje
     }
 
     private static Configuration configurationFactory(TextField serverNameTxt, TextField serverPortTxt, TextField audioExtensionTxt, TextField pathToFolderTxt) {

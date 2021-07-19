@@ -4,29 +4,27 @@ package rs.ac.bg.fon.mmklab.book;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
 
 @JsonSerialize
 public class BookInfo implements Serializable {
     /*Ovde cemo da cuvamo neke opste informacije koje su manje vise potrebne samo za neki prikaz*/
-    private String name;
+    private String title;
     private String author;
 
     public BookInfo() {
     }
 
-    public BookInfo(String name, String author) {
-        this.name = name;
+    public BookInfo(String title, String author) {
+        this.title = title;
         this.author = author;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getAuthor() {
@@ -41,7 +39,7 @@ public class BookInfo implements Serializable {
     @Override
     public String toString() {
         return "\nBookInfo{" +
-                "name='" + name + '\'' +
+                "name='" + title + '\'' +
                 ", author='" + author + '\'' +
                 '}';
     }
@@ -51,7 +49,7 @@ public class BookInfo implements Serializable {
         if (this == o) return true;
         if (!(o instanceof BookInfo)) return false;
         BookInfo bookInfo = (BookInfo) o;
-        return getName().equals(bookInfo.getName()) && getAuthor().equals(bookInfo.getAuthor());
+        return getTitle().equals(bookInfo.getTitle()) && getAuthor().equals(bookInfo.getAuthor());
     }
 
 }

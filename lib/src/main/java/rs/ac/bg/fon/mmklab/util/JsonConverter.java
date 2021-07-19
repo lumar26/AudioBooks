@@ -60,6 +60,7 @@ public class JsonConverter {
         try {
             schemaValidator.validate(test); //ako json nije validan onda baca exception
         } catch (ValidationException e) {
+            System.err.println("Greska (JsonConverter -> isValidListOfBooks): json string ne odgovoara datoj semi");
             return false;
         }
 
