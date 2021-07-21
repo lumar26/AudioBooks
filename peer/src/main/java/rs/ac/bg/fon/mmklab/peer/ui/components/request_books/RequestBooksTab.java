@@ -1,4 +1,4 @@
-package rs.ac.bg.fon.mmklab.peer.app.components.request_books;
+package rs.ac.bg.fon.mmklab.peer.ui.components.request_books;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;

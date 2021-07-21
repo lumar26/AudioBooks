@@ -49,7 +49,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.6</version>
                 <configuration>
-                    <mainClass>rs.ac.bg.fon.mmklab.peer.app.Main</mainClass>
+                    <mainClass>rs.ac.bg.fon.mmklab.peer.ui.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
