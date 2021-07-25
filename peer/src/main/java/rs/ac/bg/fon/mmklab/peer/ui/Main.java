@@ -15,7 +15,9 @@ public class Main extends Application {
         launch(args);
     }
 /*
-    String pathToFolder = "/home/lumar26/Public/AudioBooks", audioExtension = ".wav";
+    String pathToFolder = "
+    /home/lumar26/Public/AudioBooks
+    ", audioExtension = ".wav";
 */
 
     private Configuration configuration;

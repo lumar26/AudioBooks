@@ -26,8 +26,7 @@ public class ListExchanger {
         try {
             String jsonList = fromServer.readLine();
             result = JsonConverter.jsonToBookList(jsonList);
-            System.out.println("Knjige pristigle nakon zahteva koji smo poslali serveru");
-            result.forEach(e -> System.out.println(e.toString()));
+            System.out.println(">> Knjige su pristigle nakon zahteva koji smo poslali serveru <<");
         } catch (IOException e) {
             e.printStackTrace();
         }

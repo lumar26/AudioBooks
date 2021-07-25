@@ -9,6 +9,7 @@ import rs.ac.bg.fon.mmklab.book.AudioBook;
 import rs.ac.bg.fon.mmklab.communication.peer_to_server.ListExchanger;
 import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
 import rs.ac.bg.fon.mmklab.peer.service.server_communication.ServerCommunicator;
+import rs.ac.bg.fon.mmklab.peer.service.stream.receive.Receiver;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -58,13 +59,24 @@ public class RequestBooksTab {
             System.err.println("Greska: nepoznat server");
         }
         if (list != null) {
+            availableBooks.getChildren().removeAll();
             System.out.println();
-            System.out.println(">>>> Lista nije null <<<<<<<<");
+            System.out.println(">>> Lista nije null <<<");
             list.forEach(book -> {
                 Button bookBtn = new Button(book.getBookInfo().getAuthor() + " - " + book.getBookInfo().getTitle());
                 availableBooks.getChildren().add(bookBtn);
                 bookBtn.setPrefWidth(500);
-                bookBtn.setOnAction(e -> System.out.println("Ovde dodajemo metodu iz klase Receiver koja ostvaruje dalje komunikaciju sa peer-om koji poseduje tu knjigu"));
+                bookBtn.setOnAction(e -> {
+                    try {
+                        Receiver receiver = new Receiver(book);
+                        receiver.start();
+                        System.out.println("---------Jel se pokrenula nit receiver?  - > " + receiver.isRunning());
+                    } catch (IOException ioException) {
+//                        ioException.printStackTrace();
+                        System.err.println("Greska (RequestBookSTab -> showAvailableBooks -> request for book handler): pri pokretanju Receiver niti je doslo do greske");
+
+                    }
+                });
             });
         } else
             System.err.println("Greska (RequestBooksTab -> showAvailableBooks): Lista nije popunjena, ostala je null");

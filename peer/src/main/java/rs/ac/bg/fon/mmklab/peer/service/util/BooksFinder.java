@@ -6,6 +6,7 @@ import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.file.*;
 import java.util.List;
@@ -15,7 +16,7 @@ import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
 public class BooksFinder extends SimpleFileVisitor<Path> {
 
-    public static List<AudioBook> fetchBooks(String booksFolder, String audioFormatExtension) {
+    public static List<AudioBook> fetchBooks(String booksFolder, String audioFormatExtension, InetSocketAddress localSocket) {
         Path pathToBooksFolder = Paths.get(booksFolder);
 //        provera da li je prosledjena putanja postojeca
         if (Files.notExists(pathToBooksFolder)){
@@ -45,7 +46,7 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
             List<AudioBook> resultList = booksInDirectory.stream().
                     map(bookFile -> {
                         try {
-                            return new AudioBook(getAudioDescription(bookFile), getBookInfo(bookFile, audioFormatExtension), getBookOwner());
+                            return new AudioBook(getAudioDescription(bookFile), getBookInfo(bookFile, audioFormatExtension), getBookOwner(localSocket));
                         } catch (Exception e) {
 //                            nije bilo moguce pronaci vlasnika knjige, hendluj to
                             System.err.println("Greska (fetchBooks): nije pronadjen vlasnik knjige, nije prepoznat localhost");
@@ -80,23 +81,12 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
         return new BookInfo(bookName, bookAuthor);
     }
 
-    private static BookOwner getBookOwner() throws Exception {
-        int port = 5005; // ovde ce morati neka metoda koja nam daje port
-        boolean isOnline = true;
-        InetAddress bookOwnerAddress = null;
-        try {
-            bookOwnerAddress = InetAddress.getByName("localhost");
-        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-            System.err.println("Greska (getBookOwner): getByName(\"localhost\") nije odradio posaa");
-//            ovo jos ne znam kako bi moglo da se hendluje i ukojim slucajevima moze da se desi da baci izuzetak
-            isOnline = false;
-        }
-        if (bookOwnerAddress != null)
-            return new BookOwner(bookOwnerAddress, port, isOnline);
+    private static BookOwner getBookOwner(InetSocketAddress localSocket) throws Exception {
+        if (localSocket != null)
+            return new BookOwner(localSocket.getAddress(), localSocket.getPort());
         else
 //            ovo takodje mora da se resi sa nekim custom izuzetkom
-            System.err.println("Greska (getBookOwner): bookOwner == null");
+            System.err.println("Greska (getBookOwner): Lokalni soket njije lepo prosledjen");
             throw new Exception("ERROR: Could not find book owner");
     }
 

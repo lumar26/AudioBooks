@@ -14,14 +14,13 @@ public class BookOwner implements Serializable {
     private InetAddress ipAddress;
     private int port;
     /*mozda nam bude zatrebao status da li je seeder online ili ne*/
-    private boolean isOnline;
+//    private boolean isOnline;
 
     public BookOwner() {
     }
 
-    public BookOwner(InetAddress ipAddress, int port,  boolean isOnline) {
+    public BookOwner(InetAddress ipAddress, int port) {
         this.ipAddress = ipAddress;
-        this.isOnline = isOnline;
         this.port = port;
     }
 
@@ -34,13 +33,6 @@ public class BookOwner implements Serializable {
         this.ipAddress = ipAddress;
     }
 
-    public boolean isOnline() {
-        return isOnline;
-    }
-
-    public void setOnline(boolean online) {
-        isOnline = online;
-    }
 
     public int getPort() {
         return port;
@@ -55,7 +47,6 @@ public class BookOwner implements Serializable {
     public String toString() {
         return "\nBookOwner: {" +
                 ", ipAddress=" + ipAddress +
-                ", isOnline=" + isOnline +
                 ", port=" + port +
                 '}';
     }
@@ -65,6 +56,6 @@ public class BookOwner implements Serializable {
         if (this == o) return true;
         if (!(o instanceof BookOwner)) return false;
         BookOwner bookOwner = (BookOwner) o;
-        return getPort() == bookOwner.getPort() && isOnline() == bookOwner.isOnline() && getIpAddress().equals(bookOwner.getIpAddress());
+        return getPort() == bookOwner.getPort() && getIpAddress().equals(bookOwner.getIpAddress());
     }
 }

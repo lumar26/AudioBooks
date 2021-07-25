@@ -27,8 +27,7 @@
         },
         "bookOwner": {
           "ipAddress": "localhost",
-          "port": 5005,
-          "online": true
+          "port": 5005
         }
       },
       {
@@ -51,8 +50,7 @@
         },
         "bookOwner": {
           "ipAddress": "localhost",
-          "port": 5005,
-          "online": true
+          "port": 5005
         }
       }
     ]
@@ -88,8 +86,7 @@
             },
             "bookOwner": {
               "ipAddress": "localhost",
-              "port": 5005,
-              "online": true
+              "port": 5005
             }
           }
         ],
@@ -298,14 +295,12 @@
             "examples": [
               {
                 "ipAddress": "localhost",
-                "port": 5005,
-                "online": true
+                "port": 5005
               }
             ],
             "required": [
               "ipAddress",
-              "port",
-              "online"
+              "port"
             ],
             "properties": {
               "ipAddress": {
@@ -326,16 +321,6 @@
                 "default": 0,
                 "examples": [
                   5005
-                ]
-              },
-              "online": {
-                "$id": "#/items/anyOf/0/properties/bookOwner/properties/online",
-                "type": "boolean",
-                "title": "The online schema",
-                "description": "An explanation about the purpose of this instance.",
-                "default": false,
-                "examples": [
-                  true
                 ]
               }
             },

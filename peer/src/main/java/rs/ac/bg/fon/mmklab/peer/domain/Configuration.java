@@ -3,18 +3,24 @@ package rs.ac.bg.fon.mmklab.peer.domain;
 public class Configuration {
     private String serverName;
     private int serverPort;
+    private int localPort;
     private String audioExtension;
     private String pathToBookFolder;
 
-    public Configuration(String serverName, int serverPort, String audioExtension, String pathToBookFolder) {
+    public Configuration(String serverName, int serverPort, int localPort, String audioExtension, String pathToBookFolder) {
         this.serverName = serverName;
         this.serverPort = serverPort;
+        this.localPort = localPort;
         this.audioExtension = audioExtension;
         this.pathToBookFolder = pathToBookFolder;
     }
 
     public String getServerName() {
         return serverName;
+    }
+
+    public int getLocalPort() {
+        return localPort;
     }
 
     public void setServerName(String serverName) {

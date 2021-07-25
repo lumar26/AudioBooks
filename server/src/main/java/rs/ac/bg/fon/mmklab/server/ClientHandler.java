@@ -45,7 +45,7 @@ ClientHandler extends Thread {
                         System.out.println("Primljeni json sadrzaj se poklapa sa json semom");
                         list = JsonConverter.jsonToBookList(jsonList);
                         Server.updateAvailableBooks(list);
-                        list.forEach(e -> System.out.println(e.toString()));
+//                        list.forEach(e -> System.out.println(e.toString()));
                     }
                     else System.err.println("Korisnik nema knjiga na raspolaganju u folderu koji je naveo");
                 }

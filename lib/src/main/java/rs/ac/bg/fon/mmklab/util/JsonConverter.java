@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import rs.ac.bg.fon.mmklab.book.AudioBook;
+import rs.ac.bg.fon.mmklab.book.BookInfo;
 
 import java.io.*;
 import java.util.List;
@@ -33,6 +34,22 @@ public class JsonConverter {
         return "";
     }
 
+    public static String bookInfoToJson(BookInfo bookInfo){
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        try {
+            System.out.println("BookInfo koji saljemo posiljaocu: " + mapper.writeValueAsString(bookInfo));
+            return mapper.writeValueAsString(bookInfo);
+        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+            System.err.println("Greska (bookInfoToJson): problem pri procesiranju json-a. Pretvaranje BookInfo u json string");
+        }
+
+//        ovo drugacije da se resi
+        return "";
+    }
+
+
     public static List<AudioBook> jsonToBookList(String jsonInput) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
@@ -41,6 +58,15 @@ public class JsonConverter {
         return mapper.readValue(jsonInput, new TypeReference<>() {
         });
 
+    }
+
+    public static BookInfo jsonToBookInfo(String jsonInput) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
+
+//        veliko pitanje dal radi ovo
+        return mapper.readValue(jsonInput, new TypeReference<>() {
+        });
     }
 
     public static boolean isValidListOfBooks(String bookList) throws FileNotFoundException {
@@ -66,4 +92,5 @@ public class JsonConverter {
 
         return true;
     }
+
 }
