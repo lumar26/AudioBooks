@@ -1,6 +1,7 @@
 package rs.ac.bg.fon.mmklab.peer.service.util;
 
 import rs.ac.bg.fon.mmklab.book.*;
+import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -113,4 +114,27 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
 //zbog nemoguce serijalizacije objekta tipa AudioFormat moramo da prebacujemo u custom-made klasu za cuvanje audio formata
         return new AudioDescription(CustomAudioFormat.toCustom(audioFormat), lengthInFrames, frameSizeInBytes);
     }
+
+    public static File getBook(AudioBook book, Configuration configuration){
+
+        Path pathToBooksFolder = Paths.get(configuration.getPathToBookFolder());
+
+        if (Files.notExists(pathToBooksFolder)){
+//            ovde isto da se napravi neki exceptoin
+            System.err.println("Greska (fetchBooks): Prosledjena putanja ka folderu sa knjigama je nepostojeca");
+            return null; // ovde exception
+        }
+
+
+        String absolutePath = pathToBooksFolder + "/" + bookInfoToFileName(book.getBookInfo(), configuration);
+        return new File(absolutePath);
+
+    }
+
+    private static String bookInfoToFileName(BookInfo bookInfo, Configuration configuration){
+        String author = bookInfo.getAuthor().replace(" ", "_");
+        String title = bookInfo.getTitle().replace(" ", "_");
+        return author + "-" + title + configuration.getAudioExtension();
+    }
+
 }

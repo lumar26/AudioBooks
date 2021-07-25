@@ -51,7 +51,8 @@ ClientHandler extends Thread {
                 }
                 break;
                 case "get_books": {
-                    toPeer.println(JsonConverter.bookListToJSON(Server.getAvailableBooks()));
+//                    toPeer.println(JsonConverter.bookListToJSON(Server.getAvailableBooks()));
+                    toPeer.println(JsonConverter.toJSON(Server.getAvailableBooks()));
                 }
                 break;
 

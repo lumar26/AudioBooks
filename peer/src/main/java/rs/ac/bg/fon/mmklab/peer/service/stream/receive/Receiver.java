@@ -5,39 +5,83 @@ import javafx.concurrent.Task;
 import rs.ac.bg.fon.mmklab.book.AudioBook;
 import rs.ac.bg.fon.mmklab.book.BookInfo;
 import rs.ac.bg.fon.mmklab.book.BookOwner;
+import rs.ac.bg.fon.mmklab.book.CustomAudioFormat;
 import rs.ac.bg.fon.mmklab.util.JsonConverter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import javax.sound.sampled.*;
+import java.io.*;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class Receiver extends Service<AudioBook> {
 //    nit slusaoca krece sa radom onog trenutka kad korisnik odabere knjigu koju hoce da slusa
-
-    private BookOwner bookOwner;
-    private BookInfo bookInfo;
 
     /*deklaracija soketa i tokova koji sluze za uspostavljanje veze sa posiljaocem*/
     private Socket socket;
     private PrintStream toSender;
     private BufferedReader fromSender;
+    private AudioBook audioBook;
 
     /*deklaracija soketa i tokova koji sluze za prijem strimovanog audio sadrzaja*/
 // ...
 
     public Receiver(AudioBook audioBook) throws IOException {
-        this.bookOwner = audioBook.getBookOwner();
-        this.bookInfo = audioBook.getBookInfo();
+       this.audioBook = audioBook;
     }
 
+    @Override
+    protected Task<AudioBook> createTask() {
+        return new Task<>() {
+            @Override
+            protected AudioBook call() throws Exception {
+                establishConnection();
+                startReceiving();
+                return null;
+            }
+        };
+    }
 
+    private void startReceiving() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
+
+        DatagramSocket datagramSocket = new DatagramSocket(6000);// i ovo mora da se menja // socket exception
+
+//        -----------------------------------------------------------------------------------------------------------------------------------------------
+        AudioFormat audioFormat = CustomAudioFormat.toStandard(audioBook.getAudioDescription().getAudioFormat());
+        SourceDataLine sourceLine = (SourceDataLine) AudioSystem.getLine(new DataLine.Info(SourceDataLine.class, audioFormat)); // LineUnavailableException
+        sourceLine.open(audioFormat); // ne znam dal bi ovde trebalo odmah da se otvara ovo
+        sourceLine.start();
+//        -----------------------------------------------------------------------------------------------------------------------------------------------
+
+        int framesize = audioBook.getAudioDescription().getFrameSizeInBytes();
+        System.out.println("Veličina jednog okvira u bajtovima -----> " + framesize);
+        byte[] recieveBuffer = new byte[1024 * framesize]; //i ovde bi trebalo da nam se posalje koja je velicina
+        byte[] confirmationBuffer = "OK".getBytes();
+        System.out.println("Krecemo da primamo pakete sa mreze, nasa adresa: " + datagramSocket.getLocalAddress().toString());
+
+        while (true) {//ovde bi bilo dobro da posiljalac posalje prvo kolko je veliki fajl, da bismo znali dokle vrtimo petlju, ili tako nesto
+            DatagramPacket receivePacket = new DatagramPacket(recieveBuffer, recieveBuffer.length);
+
+            try {
+                datagramSocket.receive(receivePacket);
+//                System.out.print(".");
+            } catch (IOException e) {
+                System.err.println("Problem na mreži, paket nije moguće primiti");
+                e.printStackTrace();
+            }
+
+            sourceLine.write(recieveBuffer, 0, recieveBuffer.length);
+            DatagramPacket confirmationPacket = new DatagramPacket(
+                    confirmationBuffer, confirmationBuffer.length, receivePacket.getAddress(), receivePacket.getPort());
+            datagramSocket.send(confirmationPacket); //paket potvrde omogućava da pošiljalac ne šalje pakete odmah, već da sačeka da se ceo bafer isprazni i ode ka mikseru
+        }
+//        System.out.println("-------------------------------Prekid rada-------------------------------");
+    }
 
     private void establishConnection() {
-        System.out.println("(establisConnection)");
         try {
-            this.socket = new Socket(bookOwner.getIpAddress(), bookOwner.getPort()); // u ovom trenutku je uspostavljena veza
+            this.socket = new Socket(audioBook.getBookOwner().getIpAddress(), audioBook.getBookOwner().getPort()); // u ovom trenutku je uspostavljena veza
             toSender = new PrintStream(socket.getOutputStream());
             fromSender = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println("(establisConnection): Odradjena inicijalizacija tokova");
@@ -52,8 +96,8 @@ public class Receiver extends Service<AudioBook> {
             String res = fromSender.readLine();
             if (res.equals("Yes, which book?")){
                 System.out.println("Receiver: Sender confirmed");
-                toSender.println(JsonConverter.bookInfoToJson(bookInfo));
-                System.out.println("Poslata knjiga posiljaocu: " + JsonConverter.bookInfoToJson(bookInfo));
+                toSender.println(JsonConverter.toJSON(audioBook));
+                System.out.println("Poslata knjiga posiljaocu: " + JsonConverter.toJSON(audioBook));
             }
         } catch (IOException e) {
 //            e.printStackTrace();
@@ -63,14 +107,5 @@ public class Receiver extends Service<AudioBook> {
     }
 
 
-    @Override
-    protected Task<AudioBook> createTask() {
-        return new Task<>() {
-            @Override
-            protected AudioBook call() throws Exception {
-                establishConnection();
-                return null;
-            }
-        };
-    }
+
 }

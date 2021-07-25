@@ -4,6 +4,7 @@ package rs.ac.bg.fon.mmklab.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.everit.json.schema.Schema;
@@ -20,7 +21,52 @@ import java.io.*;
 import java.util.List;
 
 public class JsonConverter {
-    public static String bookListToJSON(List<AudioBook> bookList) {
+
+    public static <T> String toJSON(T obj){
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        try {
+            return mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+            System.err.println("Greska (toJSON): problem pri procesiranju json-a. Pretvaranje objekta/liste u json string");
+        }
+
+//        ovo drugacije da se resi
+        return "";
+    }
+
+//    ovo ne radi kada se kao drugi parametar prosledjuje tip liste
+    public static <T> T toOriginal(String json, Class<T> type)  {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
+
+//        veliko pitanje dal radi ovo
+        try {
+            return mapper.readValue(json, type);
+        } catch (JsonProcessingException e) {
+            System.err.println("Greska (JsonConverter ---> toOriginal):  baca JsonProcessingException jer nece da prebaci iz json stringa u objekat ");
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /*public static AudioBook jsonToAudioBook(String json)  {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
+
+//        veliko pitanje dal radi ovo
+        try {
+            return mapper.readValue(json, AudioBook.class);
+        } catch (JsonProcessingException e) {
+            System.err.println("Greska (JsonConverter ---> toOriginal):  baca JsonProcessingException jer nece da prebaci iz json stringa u objekat ");
+            e.printStackTrace();
+        }
+        return null;
+    }*/
+
+
+    /*public static String bookListToJSON(List<AudioBook> bookList) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         try {
@@ -32,9 +78,9 @@ public class JsonConverter {
 
 //        ovo drugacije da se resi
         return "";
-    }
+    }*/
 
-    public static String bookInfoToJson(BookInfo bookInfo){
+   /* public static String bookInfoToJson(BookInfo bookInfo){
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         try {
@@ -47,7 +93,7 @@ public class JsonConverter {
 
 //        ovo drugacije da se resi
         return "";
-    }
+    }*/
 
 
     public static List<AudioBook> jsonToBookList(String jsonInput) throws JsonProcessingException {
@@ -60,14 +106,14 @@ public class JsonConverter {
 
     }
 
-    public static BookInfo jsonToBookInfo(String jsonInput) throws JsonProcessingException {
+/*    public static BookInfo jsonToBookInfo(String jsonInput) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
 
 //        veliko pitanje dal radi ovo
         return mapper.readValue(jsonInput, new TypeReference<>() {
         });
-    }
+    }*/
 
     public static boolean isValidListOfBooks(String bookList) throws FileNotFoundException {
 //        ovde bi trebalo da se uporedi lista knjiga sa json semom

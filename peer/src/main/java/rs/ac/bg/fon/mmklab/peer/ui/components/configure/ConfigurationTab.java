@@ -24,14 +24,18 @@ public class ConfigurationTab {
 
         Label serverName = new Label("Unesite ime domena servera: ");
         TextField serverNameTxt = new TextField();
+        serverNameTxt.setText("localhost");
         Label serverPort = new Label("Unesite broj porta servera: ");
         TextField serverPortTxt = new TextField();
+        serverPortTxt.setText("8000");
         Label localPort = new Label("Unesite lokalni broj porta ");
         TextField localPortTxt = new TextField();
         Label audioExtension = new Label("Unesite ekstenziju audio fajla (default = \".wav\"): ");
         TextField audioExtensionTxt = new TextField();
+        audioExtensionTxt.setText(".wav");
         Label pathToFolder = new Label("Unesite Putanju do fascikle gde se nalaze audio knjige: ");
         TextField pathToFolderTxt = new TextField();
+        pathToFolderTxt.setText("/home/lumar26/Public/AudioBooks");
 
 //svaka stavka za unos ce biti poseban horizontal box koji sadrzi po labelu i poklje za unos
 

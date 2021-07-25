@@ -36,8 +36,8 @@ public class Sender extends Service<Configuration> {
                         System.out.println("Sender: awaiting connection");
 
                         communicationSocket = receiveSocket.accept();
+                        PeerHandler handler = PeerHandler.peerHandlerFactory(communicationSocket, configuration);  /// treba ovde try/catch
                         System.out.println("Desilo se prihvatanje veze i otvaranje soketa");
-                        PeerHandler handler = new PeerHandler(communicationSocket);  /// treba ovde try/catch
 //                        handlers.add(handler);
                         handler.start();
                         System.out.println("Sender: connection activated, number of connections: " + handlers.size());
@@ -51,20 +51,3 @@ public class Sender extends Service<Configuration> {
         };
     }
 }
-/*try {
-            receiveSocket = new ServerSocket(configuration.getLocalPort());
-            System.out.println("Sender: STARTED");
-
-            while (true) {
-                System.out.println("Sender: awaiting connection");
-
-                communicationSocket = receiveSocket.accept();
-                PeerHandler handler = new PeerHandler(communicationSocket);  /// treba ovde try/catch
-                handlers.add(handler);
-                handler.run();
-                System.out.println("Sender: connection activated, number of connections: " + handlers.size());
-
-            }
-        } catch (IOException e) {
-            System.err.println("ERROR: Could not open receive socket on given port");
-        }*/
