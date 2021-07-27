@@ -6,6 +6,7 @@ import rs.ac.bg.fon.mmklab.book.AudioBook;
 import rs.ac.bg.fon.mmklab.book.BookInfo;
 import rs.ac.bg.fon.mmklab.book.BookOwner;
 import rs.ac.bg.fon.mmklab.book.CustomAudioFormat;
+import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
 import rs.ac.bg.fon.mmklab.util.JsonConverter;
 
 import javax.sound.sampled.*;
@@ -23,12 +24,14 @@ public class Receiver extends Service<AudioBook> {
     private PrintStream toSender;
     private BufferedReader fromSender;
     private AudioBook audioBook;
+    private Configuration configuration;
 
     /*deklaracija soketa i tokova koji sluze za prijem strimovanog audio sadrzaja*/
 // ...
 
-    public Receiver(AudioBook audioBook) throws IOException {
+    public Receiver(AudioBook audioBook, Configuration configuration) throws IOException {
        this.audioBook = audioBook;
+       this.configuration = configuration;
     }
 
     @Override
@@ -45,7 +48,7 @@ public class Receiver extends Service<AudioBook> {
 
     private void startReceiving() throws IOException, LineUnavailableException, UnsupportedAudioFileException {
 
-        DatagramSocket datagramSocket = new DatagramSocket(6000);// i ovo mora da se menja // socket exception
+        DatagramSocket datagramSocket = new DatagramSocket(configuration.getLocalPortUDP());// i ovo mora da se menja // socket exception
 
 //        -----------------------------------------------------------------------------------------------------------------------------------------------
         AudioFormat audioFormat = CustomAudioFormat.toStandard(audioBook.getAudioDescription().getAudioFormat());
@@ -97,6 +100,7 @@ public class Receiver extends Service<AudioBook> {
             if (res.equals("Yes, which book?")){
                 System.out.println("Receiver: Sender confirmed");
                 toSender.println(JsonConverter.toJSON(audioBook));
+                toSender.println(configuration.getLocalPortUDP());
                 System.out.println("Poslata knjiga posiljaocu: " + JsonConverter.toJSON(audioBook));
             }
         } catch (IOException e) {

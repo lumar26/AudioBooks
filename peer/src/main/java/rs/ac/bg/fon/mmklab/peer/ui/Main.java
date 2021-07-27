@@ -39,8 +39,6 @@ public class Main extends Application {
         primaryStage.setWidth(700);
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
-
-
     }
 
     @Override

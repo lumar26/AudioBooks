@@ -17,10 +17,19 @@ import static java.nio.file.FileVisitOption.FOLLOW_LINKS;
 
 public class BooksFinder extends SimpleFileVisitor<Path> {
 
-    public static List<AudioBook> fetchBooks(String booksFolder, String audioFormatExtension, InetSocketAddress localSocket) {
+    public static List<AudioBook> fetchBooks(Configuration configuration) {
+        String booksFolder = configuration.getPathToBookFolder();
+        String audioFormatExtension = configuration.getAudioExtension();
+        InetSocketAddress localSocket = null;
+        try {
+            localSocket = new InetSocketAddress(InetAddress.getLocalHost(), configuration.getLocalPortTCP());
+        } catch (UnknownHostException e) {
+//            e.printStackTrace();
+            System.err.println("Greska (BooksFinder -> fetchBooks): ne moze da nadje localhost adresu");
+        }
         Path pathToBooksFolder = Paths.get(booksFolder);
 //        provera da li je prosledjena putanja postojeca
-        if (Files.notExists(pathToBooksFolder)){
+        if (Files.notExists(pathToBooksFolder)) {
 //            ovde isto da se napravi neki exceptoin
             System.err.println("Greska (fetchBooks): Prosledjena putanja ka folderu sa knjigama je nepostojeca");
             return null;
@@ -44,10 +53,11 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
                 System.err.println("Greska (fetchBooks): nema ni jedne knjige u navedenom direktorijumu");
             }
 
+            InetSocketAddress finalLocalSocket = localSocket; // ovo je moralo zbog lambda izraza nesto, ne znam zbog cega
             List<AudioBook> resultList = booksInDirectory.stream().
                     map(bookFile -> {
                         try {
-                            return new AudioBook(getAudioDescription(bookFile), getBookInfo(bookFile, audioFormatExtension), getBookOwner(localSocket));
+                            return new AudioBook(getAudioDescription(bookFile), getBookInfo(bookFile, audioFormatExtension), getBookOwner(finalLocalSocket));
                         } catch (Exception e) {
 //                            nije bilo moguce pronaci vlasnika knjige, hendluj to
                             System.err.println("Greska (fetchBooks): nije pronadjen vlasnik knjige, nije prepoznat localhost");
@@ -88,16 +98,16 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
         else
 //            ovo takodje mora da se resi sa nekim custom izuzetkom
             System.err.println("Greska (getBookOwner): Lokalni soket njije lepo prosledjen");
-            throw new Exception("ERROR: Could not find book owner");
+        return null;
     }
 
-    private static AudioDescription getAudioDescription(File bookfile){
+    private static AudioDescription getAudioDescription(File bookfile) {
 //        odradi ovde neku drugaciju inicijalizaciju mislim da ovo nije dobro ovako...
         AudioInputStream audioInputStream = null;
         AudioFormat audioFormat = null;
         long lengthInFrames = 0;
         int frameSizeInBytes = 0;
-        try{
+        try {
             audioInputStream = AudioSystem.getAudioInputStream(bookfile);
             audioFormat = audioInputStream.getFormat();
             lengthInFrames = audioInputStream.getFrameLength();
@@ -115,11 +125,11 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
         return new AudioDescription(CustomAudioFormat.toCustom(audioFormat), lengthInFrames, frameSizeInBytes);
     }
 
-    public static File getBook(AudioBook book, Configuration configuration){
+    public static File getBook(AudioBook book, Configuration configuration) {
 
         Path pathToBooksFolder = Paths.get(configuration.getPathToBookFolder());
 
-        if (Files.notExists(pathToBooksFolder)){
+        if (Files.notExists(pathToBooksFolder)) {
 //            ovde isto da se napravi neki exceptoin
             System.err.println("Greska (fetchBooks): Prosledjena putanja ka folderu sa knjigama je nepostojeca");
             return null; // ovde exception
@@ -131,7 +141,7 @@ public class BooksFinder extends SimpleFileVisitor<Path> {
 
     }
 
-    private static String bookInfoToFileName(BookInfo bookInfo, Configuration configuration){
+    private static String bookInfoToFileName(BookInfo bookInfo, Configuration configuration) {
         String author = bookInfo.getAuthor().replace(" ", "_");
         String title = bookInfo.getTitle().replace(" ", "_");
         return author + "-" + title + configuration.getAudioExtension();

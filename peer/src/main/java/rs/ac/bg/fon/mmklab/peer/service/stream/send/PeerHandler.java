@@ -3,7 +3,6 @@ package rs.ac.bg.fon.mmklab.peer.service.stream.send;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import rs.ac.bg.fon.mmklab.book.AudioBook;
-import rs.ac.bg.fon.mmklab.book.BookInfo;
 import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
 import rs.ac.bg.fon.mmklab.peer.service.util.BooksFinder;
 import rs.ac.bg.fon.mmklab.util.JsonConverter;
@@ -20,6 +19,8 @@ public class PeerHandler extends Service {
     private final PrintStream toReceiver;
     private final BufferedReader fromReceiver;
     private final Configuration configuration;
+
+    private int remotePortUDP;
 
     private PeerHandler(Socket socket, PrintStream toReceiver, BufferedReader fromReceiver, Configuration configuration) {
         this.socket = socket;
@@ -77,12 +78,12 @@ public class PeerHandler extends Service {
 
 
         System.out.println("Krecemo sa slanjem");
-        System.out.println("Adresa primaoca: " + recieverAddress.toString());
+        System.out.println("Adresa primaoca: " + recieverAddress.toString() + "; port primaoca: " + remotePortUDP);
 
         while((bytesRead = audioInputStream.read(sendBuffer)) != -1){ // kada se dodje do kraja toka vraca -1  // IOException
 //            System.out.println("Broj pročitanih bajtova -----> " + bytesRead);
             framesRead += bytesRead / frameSize;
-            sendPackage = new DatagramPacket(sendBuffer, sendBuffer.length, recieverAddress, 6000); // mora da se manja
+            sendPackage = new DatagramPacket(sendBuffer, sendBuffer.length, recieverAddress, remotePortUDP); // mora da se manja
             datagramSocket.send(sendPackage);  // IOException
 
 //            ovaj potvrdni paket nam omogućava da blokiramo slanje sve dok primalac ne primi paket, i dok ga ne prosledi na mikser
@@ -92,15 +93,15 @@ public class PeerHandler extends Service {
         // obavestenje da je dosao knjizi kraj
         datagramSocket.close();
         System.out.println("Ceo fajl je procitan, i soket zatvoren");
-
     }
 
     public AudioBook establishConnection() {
         try {
             String req = fromReceiver.readLine();
-            if (req.equals("Available for streaming?")){
+            if (req.equals("Available for streaming?")) {
                 toReceiver.println("Yes, which book?");
                 String jsonBookInfo = fromReceiver.readLine();
+                remotePortUDP = Integer.parseInt(fromReceiver.readLine().trim());
                 System.out.println("--------- Pre konvertovanja u AudioBook: " + jsonBookInfo);
                 AudioBook bookForStreaming = JsonConverter.toOriginal(jsonBookInfo, AudioBook.class);
 //                AudioBook bookForStreaming = JsonConverter.jsonToAudioBook(jsonBookInfo);

@@ -29,7 +29,7 @@ public class Sender extends Service<Configuration> {
             @Override
             protected Object call() throws Exception {
                 try {
-                    receiveSocket = new ServerSocket(configuration.getLocalPort());
+                    receiveSocket = new ServerSocket(configuration.getLocalPortTCP());
                     System.out.println("Sender: STARTED");
 
                     while (true) {

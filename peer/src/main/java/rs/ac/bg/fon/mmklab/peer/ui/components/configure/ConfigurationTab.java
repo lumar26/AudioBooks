@@ -5,6 +5,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import rs.ac.bg.fon.mmklab.communication.peer_to_server.ListExchanger;
 import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
+import rs.ac.bg.fon.mmklab.peer.service.config_service.ConfigurationService;
 import rs.ac.bg.fon.mmklab.peer.service.server_communication.ServerCommunicator;
 import rs.ac.bg.fon.mmklab.peer.service.stream.send.Sender;
 import rs.ac.bg.fon.mmklab.peer.service.util.BooksFinder;
@@ -22,32 +23,25 @@ public class ConfigurationTab {
         Tab configTab = new Tab();
         configTab.setText("Enter configurations");
 
-        Label serverName = new Label("Unesite ime domena servera: ");
-        TextField serverNameTxt = new TextField();
-        serverNameTxt.setText("localhost");
-        Label serverPort = new Label("Unesite broj porta servera: ");
-        TextField serverPortTxt = new TextField();
-        serverPortTxt.setText("8000");
-        Label localPort = new Label("Unesite lokalni broj porta ");
-        TextField localPortTxt = new TextField();
-        Label audioExtension = new Label("Unesite ekstenziju audio fajla (default = \".wav\"): ");
-        TextField audioExtensionTxt = new TextField();
-        audioExtensionTxt.setText(".wav");
+        Label localPortTCP = new Label("Unesite lokalni broj porta za tcp vezu");
+        TextField localPortTCPTxt = new TextField();
+        Label localPortUDP = new Label("Unesite lokalni broj porta za tcp vezu");
+        TextField localPortUDPTxt = new TextField();
         Label pathToFolder = new Label("Unesite Putanju do fascikle gde se nalaze audio knjige: ");
         TextField pathToFolderTxt = new TextField();
         pathToFolderTxt.setText("/home/lumar26/Public/AudioBooks");
 
-//svaka stavka za unos ce biti poseban horizontal box koji sadrzi po labelu i poklje za unos
+//svaka stavka za unos ce biti poseban horizontal box koji sadrzi po labelu i polje za unos
 
         VBox labels = new VBox(25);
-        labels.getChildren().addAll(serverName, serverPort, localPort, audioExtension, pathToFolder);
+        labels.getChildren().addAll(localPortTCP, localPortUDP, pathToFolder);
         VBox textFields = new VBox(15);
-        textFields.getChildren().addAll(serverNameTxt, serverPortTxt, localPortTxt, audioExtensionTxt, pathToFolderTxt);
+        textFields.getChildren().addAll(localPortTCPTxt, localPortUDPTxt, pathToFolderTxt);
 
 //        Submit dugme
         Button submitBtn = new Button("Potvrdi");
         submitBtn.setOnAction(a -> {
-            configuration = configurationFactory(serverNameTxt, serverPortTxt, localPortTxt, audioExtensionTxt, pathToFolderTxt);
+            configuration = configurationFactory(localPortTCPTxt, localPortUDPTxt, pathToFolderTxt);
             RequestBooksTab.updaTeConfiguration(configuration); // svaki put kad dodje do promene u knfiguraciji ona mora da se apdejtuje
 //            onog trenutka kad popunimo konfiguracije svakako cemo da saljemo serveru sve
             sendListOfBooks(configuration);
@@ -65,28 +59,14 @@ public class ConfigurationTab {
         root.getTabs().add(configTab);
     }
 
-    private static Configuration configurationFactory(TextField serverNameTxt, TextField serverPortTxt, TextField localPortTxt, TextField audioExtensionTxt, TextField pathToFolderTxt) {
-        String rawServerName = serverNameTxt.getText();
-        String rawServerPort = serverPortTxt.getText();
-        String rawLocalPort = localPortTxt.getText();
-        String rawAudioExtension = audioExtensionTxt.getText();
-        String rawPathToFolder = pathToFolderTxt.getText();
-
-//        ovde bi trebali da rade neki regularni izrazi malo da se proveri da li se unose okej stvari
-
-        return new Configuration(
-                rawServerName.trim(),
-                Integer.parseInt(rawServerPort.trim()),
-                Integer.parseInt(rawLocalPort.trim()),
-                rawAudioExtension.trim(),
-                rawPathToFolder.trim()
-        );
+    private static Configuration configurationFactory(TextField localPortTCPTxt, TextField localPortUDPTxt, TextField pathToFolderTxt) {
+        return ConfigurationService.getConfiguration(localPortTCPTxt.getText(), localPortUDPTxt.getText(), pathToFolderTxt.getText());
     }
 
     private static void sendListOfBooks(Configuration configuration) {
         //            onog trenutka kad popunimo konfiguracije svakako cemo da saljemo serveru sve
         try {
-            if (configuration == null || !configuration.isComplete()) {
+            if (configuration == null) {
 //                    korisnik nije lepo uneo konfiguraciju
                 System.err.println("Vrati korisnika na prvi tab da lepo unese konfiguraciju i naznaci mu sta je zeznuo");
             }
@@ -94,7 +74,7 @@ public class ConfigurationTab {
             ServerCommunicator communicator = ServerCommunicator.getInstance(InetAddress.getByName(configuration.getServerName()), configuration.getServerPort());
 
             ListExchanger.sendAvailableBooks(
-                    BooksFinder.fetchBooks(configuration.getPathToBookFolder(), configuration.getAudioExtension(), new InetSocketAddress(InetAddress.getByName("localhost"), configuration.getLocalPort())),
+                    BooksFinder.fetchBooks(configuration),
                     communicator.getStreamToServer(),
                     communicator.getStreamFromServer());
         } catch (IOException e) {

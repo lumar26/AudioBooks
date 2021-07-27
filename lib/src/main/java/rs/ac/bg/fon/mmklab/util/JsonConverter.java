@@ -18,6 +18,7 @@ import rs.ac.bg.fon.mmklab.book.AudioBook;
 import rs.ac.bg.fon.mmklab.book.BookInfo;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JsonConverter {
@@ -51,51 +52,8 @@ public class JsonConverter {
         return null;
     }
 
-    /*public static AudioBook jsonToAudioBook(String json)  {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
 
-//        veliko pitanje dal radi ovo
-        try {
-            return mapper.readValue(json, AudioBook.class);
-        } catch (JsonProcessingException e) {
-            System.err.println("Greska (JsonConverter ---> toOriginal):  baca JsonProcessingException jer nece da prebaci iz json stringa u objekat ");
-            e.printStackTrace();
-        }
-        return null;
-    }*/
-
-
-    /*public static String bookListToJSON(List<AudioBook> bookList) {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        try {
-            return mapper.writeValueAsString(bookList);
-        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-            System.err.println("Greska (bookListToJSON): problem pri procesiranju json-a. Pretvaranje liste u json string");
-        }
-
-//        ovo drugacije da se resi
-        return "";
-    }*/
-
-   /* public static String bookInfoToJson(BookInfo bookInfo){
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        try {
-            System.out.println("BookInfo koji saljemo posiljaocu: " + mapper.writeValueAsString(bookInfo));
-            return mapper.writeValueAsString(bookInfo);
-        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-            System.err.println("Greska (bookInfoToJson): problem pri procesiranju json-a. Pretvaranje BookInfo u json string");
-        }
-
-//        ovo drugacije da se resi
-        return "";
-    }*/
-
-
+//  za dobijanje liste knjiga iz json stringa ne moze da se koristi metoda toOriginal, za sad nismo nasli nacin
     public static List<AudioBook> jsonToBookList(String jsonInput) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
@@ -106,18 +64,9 @@ public class JsonConverter {
 
     }
 
-/*    public static BookInfo jsonToBookInfo(String jsonInput) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
-
-//        veliko pitanje dal radi ovo
-        return mapper.readValue(jsonInput, new TypeReference<>() {
-        });
-    }*/
-
     public static boolean isValidListOfBooks(String bookList) throws FileNotFoundException {
 //        ovde bi trebalo da se uporedi lista knjiga sa json semom
-        File schemaFile = new File("/home/lumar26/git/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/schema/AudioBooksSchema.json");
+        File schemaFile = new File("lib/src/main/resources/schema/AudioBooksSchema.json");
         JSONTokener schemaData = new JSONTokener(new FileInputStream(schemaFile));
         JSONObject schema = new JSONObject(schemaData);
         JSONArray test = null;

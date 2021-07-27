@@ -29,10 +29,6 @@ public class ServerCommunicator {
         else return instance;
     }
 
-    public Socket getCommunicationSocket() {
-        return communicationSocket;
-    }
-
     public PrintStream getStreamToServer() {
         return streamToServer;
     }

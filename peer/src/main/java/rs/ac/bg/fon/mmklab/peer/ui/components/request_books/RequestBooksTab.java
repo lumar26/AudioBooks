@@ -68,7 +68,7 @@ public class RequestBooksTab {
                 bookBtn.setPrefWidth(500);
                 bookBtn.setOnAction(e -> {
                     try {
-                        Receiver receiver = new Receiver(book);
+                        Receiver receiver = new Receiver(book, configuration);
                         receiver.start();
                         System.out.println("---------Jel se pokrenula nit receiver?  - > " + receiver.isRunning());
                     } catch (IOException ioException) {
