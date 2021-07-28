@@ -30,8 +30,8 @@ public class Receiver extends Service<AudioBook> {
 // ...
 
     public Receiver(AudioBook audioBook, Configuration configuration) throws IOException {
-       this.audioBook = audioBook;
-       this.configuration = configuration;
+        this.audioBook = audioBook;
+        this.configuration = configuration;
     }
 
     @Override
@@ -68,7 +68,6 @@ public class Receiver extends Service<AudioBook> {
 
             try {
                 datagramSocket.receive(receivePacket);
-//                System.out.print(".");
             } catch (IOException e) {
                 System.err.println("Problem na mreži, paket nije moguće primiti");
                 e.printStackTrace();
@@ -79,7 +78,9 @@ public class Receiver extends Service<AudioBook> {
                     confirmationBuffer, confirmationBuffer.length, receivePacket.getAddress(), receivePacket.getPort());
             datagramSocket.send(confirmationPacket); //paket potvrde omogućava da pošiljalac ne šalje pakete odmah, već da sačeka da se ceo bafer isprazni i ode ka mikseru
         }
-//        System.out.println("-------------------------------Prekid rada-------------------------------");
+//        datagramSocket.close();
+//        sourceLine.close();
+//        System.out.println("Kraj prenosa, soketi i tokovi zatvoreni na strani klijenta");
     }
 
     private void establishConnection() {
@@ -97,7 +98,7 @@ public class Receiver extends Service<AudioBook> {
         System.out.println("1.---------- Poslali smo poruku posiljaocu");
         try {
             String res = fromSender.readLine();
-            if (res.equals("Yes, which book?")){
+            if (res.equals("Yes, which book?")) {
                 System.out.println("Receiver: Sender confirmed");
                 toSender.println(JsonConverter.toJSON(audioBook));
                 toSender.println(configuration.getLocalPortUDP());
@@ -109,7 +110,6 @@ public class Receiver extends Service<AudioBook> {
 
         }
     }
-
 
 
 }

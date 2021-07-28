@@ -59,7 +59,6 @@ public class PeerHandler extends Service {
 
         AudioInputStream audioInputStream = null;
         try {
-
              audioInputStream = AudioSystem.getAudioInputStream(audioFile); // UnsupportedFileException  // IOException
         } catch (Exception e){
             e.printStackTrace();
@@ -81,14 +80,12 @@ public class PeerHandler extends Service {
         System.out.println("Adresa primaoca: " + recieverAddress.toString() + "; port primaoca: " + remotePortUDP);
 
         while((bytesRead = audioInputStream.read(sendBuffer)) != -1){ // kada se dodje do kraja toka vraca -1  // IOException
-//            System.out.println("Broj pročitanih bajtova -----> " + bytesRead);
-            framesRead += bytesRead / frameSize;
-            sendPackage = new DatagramPacket(sendBuffer, sendBuffer.length, recieverAddress, remotePortUDP); // mora da se manja
+//            framesRead += bytesRead / frameSize;
+            sendPackage = new DatagramPacket(sendBuffer, sendBuffer.length, recieverAddress, remotePortUDP);
             datagramSocket.send(sendPackage);  // IOException
 
 //            ovaj potvrdni paket nam omogućava da blokiramo slanje sve dok primalac ne primi paket, i dok ga ne prosledi na mikser
             datagramSocket.receive(confirmationPacket); // IOException
-            System.out.print(".");
         }
         // obavestenje da je dosao knjizi kraj
         datagramSocket.close();
