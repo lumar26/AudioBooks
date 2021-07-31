@@ -69,6 +69,7 @@ public class ConfigurationTab {
             if (configuration == null) {
 //                    korisnik nije lepo uneo konfiguraciju
                 System.err.println("Vrati korisnika na prvi tab da lepo unese konfiguraciju i naznaci mu sta je zeznuo");
+                return;
             }
 
             ServerCommunicator communicator = ServerCommunicator.getInstance(InetAddress.getByName(configuration.getServerName()), configuration.getServerPort());

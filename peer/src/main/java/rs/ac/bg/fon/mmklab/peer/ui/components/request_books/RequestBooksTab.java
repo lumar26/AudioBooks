@@ -10,7 +10,9 @@ import rs.ac.bg.fon.mmklab.communication.peer_to_server.ListExchanger;
 import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
 import rs.ac.bg.fon.mmklab.peer.service.server_communication.ServerCommunicator;
 import rs.ac.bg.fon.mmklab.peer.service.stream.receive.Receiver;
+import rs.ac.bg.fon.mmklab.peer.ui.components.audio_player.AudioPlayerTab;
 
+import javax.sound.sampled.LineUnavailableException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
@@ -68,13 +70,16 @@ public class RequestBooksTab {
                 bookBtn.setPrefWidth(500);
                 bookBtn.setOnAction(e -> {
                     try {
-                        Receiver receiver = new Receiver(book, configuration);
+                        Receiver receiver = Receiver.createInstance(book, configuration);
                         receiver.start();
-                        System.out.println("---------Jel se pokrenula nit receiver?  - > " + receiver.isRunning());
+                        AudioPlayerTab.setReceiver(receiver);
                     } catch (IOException ioException) {
 //                        ioException.printStackTrace();
                         System.err.println("Greska (RequestBookSTab -> showAvailableBooks -> request for book handler): pri pokretanju Receiver niti je doslo do greske");
 
+                    } catch (LineUnavailableException lineUnavailableException) {
+//                        lineUnavailableException.printStackTrace();
+                        System.err.println("(booksBtn.setOnAction): prilikom kreiranja REceiverInstance nije se mogla otvoriti audio linija iz fajla");
                     }
                 });
             });

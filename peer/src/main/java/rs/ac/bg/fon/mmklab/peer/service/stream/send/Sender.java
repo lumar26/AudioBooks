@@ -36,12 +36,9 @@ public class Sender extends Service<Configuration> {
                         System.out.println("Sender: awaiting connection");
 
                         communicationSocket = receiveSocket.accept();
-                        PeerHandler handler = PeerHandler.peerHandlerFactory(communicationSocket, configuration);  /// treba ovde try/catch
+                        PeerHandler handler = PeerHandler.createInstance(communicationSocket, configuration);  /// treba ovde try/catch
                         System.out.println("Desilo se prihvatanje veze i otvaranje soketa");
-//                        handlers.add(handler);
                         handler.start();
-                        System.out.println("Sender: connection activated, number of connections: " + handlers.size());
-
                     }
                 } catch (IOException e) {
                     System.err.println("ERROR: Could not open receive socket on given port");
