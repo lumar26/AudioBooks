@@ -17,13 +17,22 @@ public class PeerHandler extends Service {
     private final PeerHandlerInstance instance;
 
     private PeerHandler(PeerHandlerInstance instance) {
+
         this.instance = instance;
     }
 
-    public static PeerHandler createInstance(Socket socket, Configuration configuration) throws IOException {
+    public static PeerHandler createHandler(Socket socket, Configuration configuration) throws IOException {
         return new PeerHandler(PeerHandlerInstance.createHandlerInstance(socket, configuration));
     }
 
+    public PeerHandlerInstance getInstance() {
+        return instance;
+    }
+
+//    pomocna metoda kako bi mogao u createTask da prosledim trenutni objekat
+    private PeerHandler thisHandler (){
+        return this;
+    }
 
     @Override
     protected Task createTask() {
@@ -35,8 +44,8 @@ public class PeerHandler extends Service {
 //                System.out.println("Uspesan prijem informacije o knjizi koju slusalac zeli: " + bookForStreaming.toString());
 
                 // pokretanje nove niti koja osluskuje signale od primaoca, koristi iste sokete kao i metoda establish connection
-                new SignalHandler(instance).start();
-                send(bookForStreaming);
+                new SignalHandler(thisHandler()).start();
+                initiateSending(bookForStreaming);
                 System.out.println("Zavrseno slanje audio zapisa");
                 return null;
             }
@@ -65,7 +74,7 @@ public class PeerHandler extends Service {
         return null;
     }
 
-    private void send(AudioBook book) throws IOException {
+    private void initiateSending(AudioBook book) throws IOException {
 
         /*  postavljamo audio fajl iz koga cemo da ucitavamo deo po deo i da saljemo na mrezu */
         instance.setAudioFile(BooksFinder.getBook(book, instance.getConfiguration())); // ovde bi mogla da se odradi provera dal imamo tu knjigu kod nas
@@ -85,23 +94,15 @@ public class PeerHandler extends Service {
 //        paket koji dobijamo od primaoca da bismo znali kad je završio sa obrađivanjem poslednjeg paketa koji smo mu poslali
 
         /* paketi koje saljemo na mrezu*/
-        DatagramPacket dataPackage;
         DatagramPacket confirmationPacket = new DatagramPacket(confirmationMessage, confirmationMessage.length);
 
         System.out.println("Krecemo sa slanjem");
         System.out.println("Adresa primaoca: " + instance.getReceiverAddress().toString() + "; port primaoca: " + instance.getRemotePortUDP());
 
-        while ((instance.getAudioInputStream().read(sendBuffer)) != -1) { // kada se dodje do kraja toka vraca -1  // IOException
-//            kreiranje paketa koji saljemo na mrezu
-            dataPackage = new DatagramPacket(sendBuffer, sendBuffer.length, instance.getReceiverAddress(), instance.getRemotePortUDP());
 
-            /* trenutak slanja paketa */
-            instance.getDatagramSocket().send(dataPackage);  // IOException
-            instance.setFramesSent(sendBuffer.length / frameSize); // azuriramo broj poslatih frejmova
+//        ovo je proba da bismo mogli posle da nastavimo slanje
+        send(instance, sendBuffer, frameSize, confirmationPacket);
 
-//            ovaj potvrdni paket nam omogućava da blokiramo slanje sve dok primalac ne primi paket, i dok ga ne prosledi na mikser
-            instance.getDatagramSocket().receive(confirmationPacket); // IOException
-        }
 
         // zatvaranje svih soketa i tokova
         closeUDPConnection(instance.getDatagramSocket());
@@ -115,11 +116,25 @@ public class PeerHandler extends Service {
         System.out.println("Ceo fajl je procitan, i soket zatvoren");
     }
 
-    private void closeUDPConnection(DatagramSocket ds){
+    public void send(PeerHandlerInstance instance, byte[] sendBuffer,int frameSize,  DatagramPacket confirmationPacket) throws IOException {
+        while ((instance.getAudioInputStream().read(sendBuffer)) != -1) { // kada se dodje do kraja toka vraca -1  // IOException
+//            kreiranje paketa koji saljemo na mrezu
+            DatagramPacket dataPackage = new DatagramPacket(sendBuffer, sendBuffer.length, instance.getReceiverAddress(), instance.getRemotePortUDP());
+
+            /* trenutak slanja paketa */
+            instance.getDatagramSocket().send(dataPackage);  // IOException
+            instance.setFramesSent(sendBuffer.length / frameSize); // azuriramo broj poslatih frejmova
+
+//            ovaj potvrdni paket nam omogućava da blokiramo slanje sve dok primalac ne primi paket, i dok ga ne prosledi na mikser
+            instance.getDatagramSocket().receive(confirmationPacket); // IOException
+        }
+    }
+
+    public void closeUDPConnection(DatagramSocket ds){
         ds.close();
     }
 
-    private void closeTCPConnection(Socket s, PrintStream ps, BufferedReader br) throws IOException {
+    public void closeTCPConnection(Socket s, PrintStream ps, BufferedReader br) throws IOException {
         s.close();
         ps.close();
         br.close();

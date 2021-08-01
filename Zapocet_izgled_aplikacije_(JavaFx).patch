@@ -1,0 +1,985 @@
+Index: AudioBooks/lib/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/AudioBooks/lib/pom.xml b/AudioBooks/lib/pom.xml
+--- a/AudioBooks/lib/pom.xml	(revision 08a20d202362421bf5d1c04a94174abe377b832a)
++++ b/AudioBooks/lib/pom.xml	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
+@@ -11,5 +11,16 @@
+ 
+     <artifactId>lib</artifactId>
+ 
++    <dependencies>
++        <!--Json schema validator-->
++        <!-- https://mvnrepository.com/artifact/org.everit.json/org.everit.json.schema -->
++        <dependency>
++            <groupId>org.everit.json</groupId>
++            <artifactId>org.everit.json.schema</artifactId>
++            <version>1.5.1</version>
++        </dependency>
++
++
++    </dependencies>
+ 
+ </project>
+\ No newline at end of file
+Index: AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/JsonConverter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/JsonConverter.java b/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/JsonConverter.java
+new file mode 100644
+--- /dev/null	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
++++ b/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/JsonConverter.java	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
+@@ -0,0 +1,82 @@
++package rs.ac.bg.fon.mmklab.util;
++
++import com.fasterxml.jackson.annotation.JsonAutoDetect;
++import com.fasterxml.jackson.annotation.PropertyAccessor;
++import com.fasterxml.jackson.core.JsonParser;
++import com.fasterxml.jackson.core.JsonProcessingException;
++import com.fasterxml.jackson.core.type.TypeReference;
++import com.fasterxml.jackson.databind.DeserializationFeature;
++import com.fasterxml.jackson.databind.ObjectMapper;
++import com.fasterxml.jackson.databind.SerializationFeature;
++import org.everit.json.schema.Schema;
++import org.everit.json.schema.ValidationException;
++import org.everit.json.schema.loader.SchemaLoader;
++import org.json.JSONArray;
++import org.json.JSONObject;
++import org.json.JSONTokener;
++import rs.ac.bg.fon.mmklab.book.AudioBook;
++
++import java.io.*;
++import java.lang.reflect.Type;
++import java.util.List;
++
++public class JsonConverter {
++    public static String bookListToJSON(List<AudioBook> bookList){
++        ObjectMapper mapper = new ObjectMapper();
++//        mapper.enable(SerializationFeature.INDENT_OUTPUT);
++        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
++        try {
++            return mapper.writeValueAsString(bookList);
++        } catch (JsonProcessingException e) {
++//            e.printStackTrace();
++            System.err.println("Greska (bookListToJSON): problem pri procesiranju json-a. Pretvaranje liste u json string");
++        }
++
++//        ovo drugacije da se resi
++        return "";
++    }
++
++    public static String requestForBooksToJSON(String requestMessage){
++        ObjectMapper mapper = new ObjectMapper();
++        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
++        try {
++            return mapper.writeValueAsString(requestMessage);
++        } catch (JsonProcessingException e) {
++//            e.printStackTrace();
++            System.err.println("Greska (requestForBooksToJSON): problem pri procesiranju json-a. Pretvaranje stringa u json string");
++
++        }
++
++        return ""; // i ovo drugacije da se odradi, ne bi smelo da ostane ovako
++    }
++
++    public static List<AudioBook> jsonToBookList(String jsonInput) throws JsonProcessingException {
++        ObjectMapper mapper = new ObjectMapper();
++        mapper.configure(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES, false);
++
++//        veliko pitanje dal radi ovo
++        return mapper.readValue(jsonInput, new TypeReference<>() {
++        });
++
++    }
++
++    public static  boolean isValidListOfBooks(String bookList) throws FileNotFoundException {
++//        ovde bi trebalo da se uporedi lista knjiga sa json semom
++        File schemaFile = new File("/home/lumar26/git/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/schema/AudioBooksSchema.json");
++        JSONTokener schemaData = new JSONTokener(new FileInputStream(schemaFile));
++        JSONObject schema = new JSONObject(schemaData);
++
++//        ono sto validiramo, u pitanju je niz objekata pa mora da bude JSONArray
++        JSONArray test = new JSONArray(bookList);
++
++        Schema schemaValidator = SchemaLoader.load(schema);
++
++        try{
++            schemaValidator.validate(test); //ako json nije validan onda baca exception
++        }catch (ValidationException e){
++            return false;
++        }
++
++        return true;
++    }
++}
+Index: AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/schema/AudioBooksSchema.json
+===================================================================
+diff --git a/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/schema/AudioBooksSchema.json b/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/schema/AudioBooksSchema.json
+new file mode 100644
+--- /dev/null	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
++++ b/AudioBooks/lib/src/main/java/rs/ac/bg/fon/mmklab/util/schema/AudioBooksSchema.json	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
+@@ -0,0 +1,540 @@
++{
++  "$schema": "http://json-schema.org/draft-07/schema",
++  "$id": "http://example.com/example.json",
++  "type": "array",
++  "title": "The root schema",
++  "description": "The root schema comprises the entire JSON document.",
++  "default": [],
++  "examples": [
++    [
++      {
++        "audioDescription": {
++          "audioInputStream": {
++            "format": {
++              "encoding": {},
++              "sampleRate": 48000.0,
++              "sampleSizeInBits": 16,
++              "channels": 2,
++              "frameSize": 4,
++              "frameRate": 48000.0,
++              "bigEndian": false
++            },
++            "frameLength": 9974767
++          },
++          "audioFormat": {
++            "encoding": {},
++            "sampleRate": 48000.0,
++            "sampleSizeInBits": 16,
++            "channels": 2,
++            "frameSize": 4,
++            "frameRate": 48000.0,
++            "bigEndian": false
++          },
++          "lengthInFrames": 9974767,
++          "frameSizeInBytes": 4
++        },
++        "bookInfo": {
++          "name": "Naši dani",
++          "author": "Vladislav Petković Dis"
++        },
++        "bookOwner": {
++          "ipAddress": "localhost",
++          "port": 5005,
++          "online": true
++        }
++      },
++      {
++        "audioDescription": {
++          "audioInputStream": {
++            "format": {
++              "encoding": {},
++              "sampleRate": 44100.0,
++              "sampleSizeInBits": 16,
++              "channels": 2,
++              "frameSize": 4,
++              "frameRate": 44100.0,
++              "bigEndian": false
++            },
++            "frameLength": 105622528
++          },
++          "audioFormat": {
++            "encoding": {},
++            "sampleRate": 44100.0,
++            "sampleSizeInBits": 16,
++            "channels": 2,
++            "frameSize": 4,
++            "frameRate": 44100.0,
++            "bigEndian": false
++          },
++          "lengthInFrames": 105622528,
++          "frameSizeInBytes": 4
++        },
++        "bookInfo": {
++          "name": "Bedni ljudi",
++          "author": "Fjodor Mihailovič Dostojevski"
++        },
++        "bookOwner": {
++          "ipAddress": "localhost",
++          "port": 5005,
++          "online": true
++        }
++      }
++    ]
++  ],
++  "additionalItems": true,
++  "items": {
++    "$id": "#/items",
++    "anyOf": [
++      {
++        "$id": "#/items/anyOf/0",
++        "type": "object",
++        "title": "The first anyOf schema",
++        "description": "An explanation about the purpose of this instance.",
++        "default": {},
++        "examples": [
++          {
++            "audioDescription": {
++              "audioInputStream": {
++                "format": {
++                  "encoding": {},
++                  "sampleRate": 48000.0,
++                  "sampleSizeInBits": 16,
++                  "channels": 2,
++                  "frameSize": 4,
++                  "frameRate": 48000.0,
++                  "bigEndian": false
++                },
++                "frameLength": 9974767
++              },
++              "audioFormat": {
++                "encoding": {},
++                "sampleRate": 48000.0,
++                "sampleSizeInBits": 16,
++                "channels": 2,
++                "frameSize": 4,
++                "frameRate": 48000.0,
++                "bigEndian": false
++              },
++              "lengthInFrames": 9974767,
++              "frameSizeInBytes": 4
++            },
++            "bookInfo": {
++              "name": "Naši dani",
++              "author": "Vladislav Petković Dis"
++            },
++            "bookOwner": {
++              "ipAddress": "localhost",
++              "port": 5005,
++              "online": true
++            }
++          }
++        ],
++        "required": [
++          "audioDescription",
++          "bookInfo",
++          "bookOwner"
++        ],
++        "properties": {
++          "audioDescription": {
++            "$id": "#/items/anyOf/0/properties/audioDescription",
++            "type": "object",
++            "title": "The audioDescription schema",
++            "description": "An explanation about the purpose of this instance.",
++            "default": {},
++            "examples": [
++              {
++                "audioInputStream": {
++                  "format": {
++                    "encoding": {},
++                    "sampleRate": 48000.0,
++                    "sampleSizeInBits": 16,
++                    "channels": 2,
++                    "frameSize": 4,
++                    "frameRate": 48000.0,
++                    "bigEndian": false
++                  },
++                  "frameLength": 9974767
++                },
++                "audioFormat": {
++                  "encoding": {},
++                  "sampleRate": 48000.0,
++                  "sampleSizeInBits": 16,
++                  "channels": 2,
++                  "frameSize": 4,
++                  "frameRate": 48000.0,
++                  "bigEndian": false
++                },
++                "lengthInFrames": 9974767,
++                "frameSizeInBytes": 4
++              }
++            ],
++            "required": [
++              "audioInputStream",
++              "audioFormat",
++              "lengthInFrames",
++              "frameSizeInBytes"
++            ],
++            "properties": {
++              "audioInputStream": {
++                "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream",
++                "type": "object",
++                "title": "The audioInputStream schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": {},
++                "examples": [
++                  {
++                    "format": {
++                      "encoding": {},
++                      "sampleRate": 48000.0,
++                      "sampleSizeInBits": 16,
++                      "channels": 2,
++                      "frameSize": 4,
++                      "frameRate": 48000.0,
++                      "bigEndian": false
++                    },
++                    "frameLength": 9974767
++                  }
++                ],
++                "required": [
++                  "format",
++                  "frameLength"
++                ],
++                "properties": {
++                  "format": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format",
++                    "type": "object",
++                    "title": "The format schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": {},
++                    "examples": [
++                      {
++                        "encoding": {},
++                        "sampleRate": 48000.0,
++                        "sampleSizeInBits": 16,
++                        "channels": 2,
++                        "frameSize": 4,
++                        "frameRate": 48000.0,
++                        "bigEndian": false
++                      }
++                    ],
++                    "required": [
++                      "encoding",
++                      "sampleRate",
++                      "sampleSizeInBits",
++                      "channels",
++                      "frameSize",
++                      "frameRate",
++                      "bigEndian"
++                    ],
++                    "properties": {
++                      "encoding": {
++                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/encoding",
++                        "type": "object",
++                        "title": "The encoding schema",
++                        "description": "An explanation about the purpose of this instance.",
++                        "default": {},
++                        "examples": [
++                          {}
++                        ],
++                        "required": [],
++                        "additionalProperties": true
++                      },
++                      "sampleRate": {
++                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/sampleRate",
++                        "type": "number",
++                        "title": "The sampleRate schema",
++                        "description": "An explanation about the purpose of this instance.",
++                        "default": 0.0,
++                        "examples": [
++                          48000.0
++                        ]
++                      },
++                      "sampleSizeInBits": {
++                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/sampleSizeInBits",
++                        "type": "integer",
++                        "title": "The sampleSizeInBits schema",
++                        "description": "An explanation about the purpose of this instance.",
++                        "default": 0,
++                        "examples": [
++                          16
++                        ]
++                      },
++                      "channels": {
++                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/channels",
++                        "type": "integer",
++                        "title": "The channels schema",
++                        "description": "An explanation about the purpose of this instance.",
++                        "default": 0,
++                        "examples": [
++                          2
++                        ]
++                      },
++                      "frameSize": {
++                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/frameSize",
++                        "type": "integer",
++                        "title": "The frameSize schema",
++                        "description": "An explanation about the purpose of this instance.",
++                        "default": 0,
++                        "examples": [
++                          4
++                        ]
++                      },
++                      "frameRate": {
++                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/frameRate",
++                        "type": "number",
++                        "title": "The frameRate schema",
++                        "description": "An explanation about the purpose of this instance.",
++                        "default": 0.0,
++                        "examples": [
++                          48000.0
++                        ]
++                      },
++                      "bigEndian": {
++                        "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/format/properties/bigEndian",
++                        "type": "boolean",
++                        "title": "The bigEndian schema",
++                        "description": "An explanation about the purpose of this instance.",
++                        "default": false,
++                        "examples": [
++                          false
++                        ]
++                      }
++                    },
++                    "additionalProperties": true
++                  },
++                  "frameLength": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioInputStream/properties/frameLength",
++                    "type": "integer",
++                    "title": "The frameLength schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": 0,
++                    "examples": [
++                      9974767
++                    ]
++                  }
++                },
++                "additionalProperties": true
++              },
++              "audioFormat": {
++                "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat",
++                "type": "object",
++                "title": "The audioFormat schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": {},
++                "examples": [
++                  {
++                    "encoding": {},
++                    "sampleRate": 48000.0,
++                    "sampleSizeInBits": 16,
++                    "channels": 2,
++                    "frameSize": 4,
++                    "frameRate": 48000.0,
++                    "bigEndian": false
++                  }
++                ],
++                "required": [
++                  "encoding",
++                  "sampleRate",
++                  "sampleSizeInBits",
++                  "channels",
++                  "frameSize",
++                  "frameRate",
++                  "bigEndian"
++                ],
++                "properties": {
++                  "encoding": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/encoding",
++                    "type": "object",
++                    "title": "The encoding schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": {},
++                    "examples": [
++                      {}
++                    ],
++                    "required": [],
++                    "additionalProperties": true
++                  },
++                  "sampleRate": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/sampleRate",
++                    "type": "number",
++                    "title": "The sampleRate schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": 0.0,
++                    "examples": [
++                      48000.0
++                    ]
++                  },
++                  "sampleSizeInBits": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/sampleSizeInBits",
++                    "type": "integer",
++                    "title": "The sampleSizeInBits schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": 0,
++                    "examples": [
++                      16
++                    ]
++                  },
++                  "channels": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/channels",
++                    "type": "integer",
++                    "title": "The channels schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": 0,
++                    "examples": [
++                      2
++                    ]
++                  },
++                  "frameSize": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameSize",
++                    "type": "integer",
++                    "title": "The frameSize schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": 0,
++                    "examples": [
++                      4
++                    ]
++                  },
++                  "frameRate": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/frameRate",
++                    "type": "number",
++                    "title": "The frameRate schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": 0.0,
++                    "examples": [
++                      48000.0
++                    ]
++                  },
++                  "bigEndian": {
++                    "$id": "#/items/anyOf/0/properties/audioDescription/properties/audioFormat/properties/bigEndian",
++                    "type": "boolean",
++                    "title": "The bigEndian schema",
++                    "description": "An explanation about the purpose of this instance.",
++                    "default": false,
++                    "examples": [
++                      false
++                    ]
++                  }
++                },
++                "additionalProperties": true
++              },
++              "lengthInFrames": {
++                "$id": "#/items/anyOf/0/properties/audioDescription/properties/lengthInFrames",
++                "type": "integer",
++                "title": "The lengthInFrames schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": 0,
++                "examples": [
++                  9974767
++                ]
++              },
++              "frameSizeInBytes": {
++                "$id": "#/items/anyOf/0/properties/audioDescription/properties/frameSizeInBytes",
++                "type": "integer",
++                "title": "The frameSizeInBytes schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": 0,
++                "examples": [
++                  4
++                ]
++              }
++            },
++            "additionalProperties": true
++          },
++          "bookInfo": {
++            "$id": "#/items/anyOf/0/properties/bookInfo",
++            "type": "object",
++            "title": "The bookInfo schema",
++            "description": "An explanation about the purpose of this instance.",
++            "default": {},
++            "examples": [
++              {
++                "name": "Naši dani",
++                "author": "Vladislav Petković Dis"
++              }
++            ],
++            "required": [
++              "name",
++              "author"
++            ],
++            "properties": {
++              "name": {
++                "$id": "#/items/anyOf/0/properties/bookInfo/properties/name",
++                "type": "string",
++                "title": "The name schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": "",
++                "examples": [
++                  "Naši dani"
++                ]
++              },
++              "author": {
++                "$id": "#/items/anyOf/0/properties/bookInfo/properties/author",
++                "type": "string",
++                "title": "The author schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": "",
++                "examples": [
++                  "Vladislav Petković Dis"
++                ]
++              }
++            },
++            "additionalProperties": true
++          },
++          "bookOwner": {
++            "$id": "#/items/anyOf/0/properties/bookOwner",
++            "type": "object",
++            "title": "The bookOwner schema",
++            "description": "An explanation about the purpose of this instance.",
++            "default": {},
++            "examples": [
++              {
++                "ipAddress": "localhost",
++                "port": 5005,
++                "online": true
++              }
++            ],
++            "required": [
++              "ipAddress",
++              "port",
++              "online"
++            ],
++            "properties": {
++              "ipAddress": {
++                "$id": "#/items/anyOf/0/properties/bookOwner/properties/ipAddress",
++                "type": "string",
++                "title": "The ipAddress schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": "",
++                "examples": [
++                  "localhost"
++                ]
++              },
++              "port": {
++                "$id": "#/items/anyOf/0/properties/bookOwner/properties/port",
++                "type": "integer",
++                "title": "The port schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": 0,
++                "examples": [
++                  5005
++                ]
++              },
++              "online": {
++                "$id": "#/items/anyOf/0/properties/bookOwner/properties/online",
++                "type": "boolean",
++                "title": "The online schema",
++                "description": "An explanation about the purpose of this instance.",
++                "default": false,
++                "examples": [
++                  true
++                ]
++              }
++            },
++            "additionalProperties": true
++          }
++        },
++        "additionalProperties": true
++      }
++    ]
++  }
++}
+\ No newline at end of file
+Index: AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/app/Main.java
+===================================================================
+diff --git a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/app/Main.java b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/app/Main.java
+--- a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/app/Main.java	(revision 08a20d202362421bf5d1c04a94174abe377b832a)
++++ b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/app/Main.java	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
+@@ -3,13 +3,19 @@
+ import javafx.application.Application;
+ import javafx.scene.Scene;
+ import javafx.scene.control.Button;
++import javafx.scene.control.Tab;
++import javafx.scene.control.TabPane;
++import javafx.scene.control.TextArea;
+ import javafx.scene.layout.BorderPane;
+ import javafx.stage.Stage;
+ import rs.ac.bg.fon.mmklab.peer.service.server_communication.ServerCommunicator;
+-import rs.ac.bg.fon.mmklab.peer.service.service_utils.BooksFinder;
++import rs.ac.bg.fon.mmklab.peer.service.util.BooksFinder;
+ import rs.ac.bg.fon.mmklab.book.AudioBook;
++import rs.ac.bg.fon.mmklab.util.JsonConverter;
+ 
++import java.io.IOException;
+ import java.net.InetAddress;
++import java.net.UnknownHostException;
+ import java.util.List;
+ 
+ public class Main extends Application {
+@@ -18,42 +24,84 @@
+         launch(args);
+     }
+ 
++    String pathToFolder = "/home/lumar26/Public/AudioBooks", audioExtension = ".wav";
++
++    InetAddress serverAddress;
++
++    {
++        try {
++            serverAddress = InetAddress.getByName("localhost");
++        } catch (UnknownHostException e) {
++//            e.printStackTrace();
++            System.err.println("Greska (MAIN): ne postoji localhost" );
++        }
++    }
++    int serverPort = 5005;
++
+     @Override
+     public void init() throws Exception {
+ //        slanje liste knjiga serveru
+-        String pathToFolder = "/home/lumar26/Public/AudioBooks", audioExtension = ".wav";
+-
+-        InetAddress serverAddress = InetAddress.getByName("localhost");
+-        int serverPort = 5005;
+-
+ 
+         List<AudioBook> listOfBooks = BooksFinder.fetchBooks(pathToFolder, audioExtension);
+-//        System.out.println(listOfBooks);
+-//        listOfBooks.forEach(book -> book.toString());
+-        ServerCommunicator.initialConnectToServer(serverAddress, serverPort, listOfBooks);
++        String booksArray = JsonConverter.bookListToJSON(listOfBooks);
++        System.out.println(booksArray);
++        System.out.println("Da li je Json validan: " + JsonConverter.isValidListOfBooks(booksArray));
++        List<AudioBook> newList = JsonConverter.jsonToBookList(booksArray);
++        newList.forEach(book -> book.toString());
++//        ServerCommunicator.getInstance().sendAvailableBooks(listOfBooks);
+     }
+ 
+     @Override
+     public void start(Stage primaryStage) {
++
++        BorderPane requestBooksTabContent = new BorderPane();
++        Button sendRequestBtn = new Button("Get available books");
++        TextArea listOfBooks = new TextArea();
++//        event handler nam treba za ovo dugme
++        sendRequestBtn.setOnAction(action -> showAvailableBooks(listOfBooks));
++        requestBooksTabContent.setTop(sendRequestBtn);
++        requestBooksTabContent.setCenter(listOfBooks);
++
++
++        TabPane root = new TabPane();
++        root.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); //korisnik nema mogucnost da zatvori tab
++
++        Tab requestBooksTab = new Tab();
++        requestBooksTab.setText("Get available books list");
++        requestBooksTab.setContent(requestBooksTabContent);
++        if (requestBooksTab.isSelected()){
++//            ako je fajl selektovan da odradimo da se automatski azurira lista knjiga
++        }
++
++        Tab audioPlayerTab = new Tab();
++        audioPlayerTab.setText("Audio player");
++
++//        dodavanje tabova na TabPane
++        root.getTabs().addAll(requestBooksTab, audioPlayerTab);
++
++
++
+         primaryStage.setTitle("Audio Books");
+-        BorderPane root = new BorderPane();
+-
+-
+-
+-        Button btnPlay = new Button("Play");
+-
+-
+-        Button btnStop = new Button("Stop reproduction");
+-        btnStop.setOnAction(e -> {
+-//            stopAudio();
+-        });
+-        root.setCenter(btnPlay);
+-        root.setBottom(btnStop);
+-
+-
+         primaryStage.setScene(new Scene(root, 300, 275));
+         primaryStage.show();
+ 
+ 
++    }
++
++    private void showAvailableBooks(TextArea listOfBooks) {
++        try {
++            List<AudioBook>  list = ServerCommunicator.getInstance().getAvailableBooks();
++            list.forEach(book -> listOfBooks.appendText(book.toString()));
++        } catch (IOException e) {
++            e.printStackTrace();
++        }
++        /*List<AudioBook>  list = BooksFinder.fetchBooks(pathToFolder, audioExtension);
++        list.forEach(book -> listOfBooks.appendText(book.toString()));*/  // radi sve ok, lepo se prikazuje, samo treba da se zameni nacin na koji se prikazuje
++    }
++
++    @Override
++    public void stop() throws Exception {
++//        Ovde cemo da implementiramo komunikaciju sa najpre peer-om ukoliko je prestanak rada aplikacije nasilan, tj pre završetka strimovanja
++//        Nakon toga komunikacija sa serverom u smislu odjavljivanja sa servera
+     }
+ }
+Index: AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/server_communication/ServerCommunicator.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/server_communication/ServerCommunicator.java b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/server_communication/ServerCommunicator.java
+--- a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/server_communication/ServerCommunicator.java	(revision 08a20d202362421bf5d1c04a94174abe377b832a)
++++ b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/server_communication/ServerCommunicator.java	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
+@@ -1,48 +1,59 @@
+ package rs.ac.bg.fon.mmklab.peer.service.server_communication;
+ 
+ import rs.ac.bg.fon.mmklab.book.AudioBook;
+-import rs.ac.bg.fon.mmklab.peer.service.service_utils.JsonConverter;
++import rs.ac.bg.fon.mmklab.peer.service.util.ServerFinder;
++import rs.ac.bg.fon.mmklab.util.JsonConverter;
+ 
+-import java.io.BufferedReader;
+-import java.io.IOException;
+-import java.io.InputStreamReader;
+-import java.io.PrintStream;
+-import java.net.InetAddress;
++import java.io.*;
+ import java.net.Socket;
+ import java.util.List;
+ 
+ public class ServerCommunicator {
+-    /*Ova klasa treba da sadrzi:
++
++    private static ServerCommunicator instance;
++
++    private final Socket communicationSocket;
++    private final ObjectOutputStream streamToServer;
++    private final ObjectInputStream streamFromServer;
++
++    private ServerCommunicator() throws IOException {
++        this.communicationSocket = new Socket(ServerFinder.getServerAddress(), ServerFinder.getServerPort()); // ne znam sto ne javlja gresku kad getServerAddres baca izuzetak...
++        this.streamToServer = new ObjectOutputStream(communicationSocket.getOutputStream());
++        this.streamFromServer = new ObjectInputStream(communicationSocket.getInputStream());
++    }
+ 
+-    * 3. metoda koja datu listu salje serveru na osnovu prosledjene adrese servera, u JSON formatu
+-    */
++    public static ServerCommunicator getInstance() throws IOException {
++        if (instance == null) return new ServerCommunicator();
++        else return instance;
++    }
+ 
+-//  prvo cemo da odradimo metodu koja pokrece komunikaciju, otvaranje konekcije, itd...
++    public void sendAvailableBooks(List<AudioBook> listOfBooks) throws IOException {
+ 
+-    public static void initialConnectToServer(InetAddress serverAddress, int serverPort, List<AudioBook> listOfBooks){
+-        Socket communicationSocket;
+-        BufferedReader streamFromServer;
+-        PrintStream streamToServer;
++//        System.out.println("(initialConnectToServer): Lista knjiga koja se salje serveru ima sledeci oblik: " + JsonConverter.bookListToJSON(listOfBooks));
+ 
+-//        proba mala da vidimo sta se salje
+-        System.out.println("(initialConnectToServer): Lista knjiga koja se salje serveru ima sledeci oblik: " + JsonConverter.bookListToJSON(listOfBooks));
++        streamToServer.writeObject(listOfBooks); // da li moze cela lista odjednom da se pise u tok pitanje je....
++        streamToServer.write(0); // ovde neka se pise neki signal da se doslo do kraja liste
++    }
+ 
+-        try {
+-//            inicijalizacija potrebnih tokova, preko tih tokova saljemo stringove
+-            communicationSocket = new Socket(serverAddress, serverPort); // u ovom trenutku je veza  sa serverom uspostavljena
+-            streamFromServer = new BufferedReader(new InputStreamReader(communicationSocket.getInputStream()));
+-            streamToServer = new PrintStream(communicationSocket.getOutputStream());
+-
+-//          onda prvo sto bismo trebali da uradimo jeste da uspostavimo nekakvu vezu sa serverom, da se odradi neka
+-//          saljemo listu knjiga
+-            streamToServer.print(listOfBooks); // u ovom trenutku kad server procita iz toka
+-
+-
+-        } catch (IOException e) {
+-            System.err.println("Greska(initialConnectToServer): Nije moguce otvoriti socket ka serveru, proveri server ili adresu i port koji su prosledjeni");
+-//            e.printStackTrace();
++
++    public List<AudioBook> getAvailableBooks() {
++        List<AudioBook> result = null;
++        while(true) {
++            try {
++                if (streamFromServer.readInt() == 0) break;
++            } catch (IOException e) {
++//                e.printStackTrace();
++                System.out.println("Nije procitan int signal");
++            }
++            try {
++               result = (List<AudioBook>) streamFromServer.readObject();
++            } catch (IOException e) {
++                System.err.println("Greska (getAvailableBooks): nije uspelo citanje iz toka od servera");
++                e.printStackTrace();
++            } catch (ClassNotFoundException e) {
++                e.printStackTrace();
++            }
+         }
+-
++        return result;
+     }
+-
+ }
+Index: AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/JsonConverter.java
+===================================================================
+diff --git a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/JsonConverter.java b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/JsonConverter.java
+deleted file mode 100644
+--- a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/JsonConverter.java	(revision 08a20d202362421bf5d1c04a94174abe377b832a)
++++ /dev/null	(revision 08a20d202362421bf5d1c04a94174abe377b832a)
+@@ -1,27 +0,0 @@
+-package rs.ac.bg.fon.mmklab.peer.service.service_utils;
+-
+-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+-import com.fasterxml.jackson.annotation.PropertyAccessor;
+-import com.fasterxml.jackson.core.JsonProcessingException;
+-import com.fasterxml.jackson.databind.ObjectMapper;
+-import com.fasterxml.jackson.databind.SerializationFeature;
+-import rs.ac.bg.fon.mmklab.book.AudioBook;
+-
+-import java.util.List;
+-
+-public class JsonConverter {
+-    public static String bookListToJSON(List<AudioBook> bookList){
+-        ObjectMapper mapper = new ObjectMapper();
+-//        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+-        try {
+-            return mapper.writeValueAsString(bookList);
+-        } catch (JsonProcessingException e) {
+-            e.printStackTrace();
+-            System.err.println("Greska (bookListToJSON): problem pri procesiranju json-a. Pretvaranje liste u json string");
+-        }
+-
+-//        ovo drugacije da se resi
+-        return "";
+-    }
+-}
+Index: AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/BooksFinder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/BooksFinder.java b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/util/BooksFinder.java
+rename from AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/BooksFinder.java
+rename to AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/util/BooksFinder.java
+--- a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/service_utils/BooksFinder.java	(revision 08a20d202362421bf5d1c04a94174abe377b832a)
++++ b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/util/BooksFinder.java	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
+@@ -1,4 +1,4 @@
+-package rs.ac.bg.fon.mmklab.peer.service.service_utils;
++package rs.ac.bg.fon.mmklab.peer.service.util;
+ 
+ import rs.ac.bg.fon.mmklab.book.AudioBook;
+ import rs.ac.bg.fon.mmklab.book.AudioDescription;
+@@ -38,7 +38,7 @@
+             List<File> filesInDirectory = Files.walk(pathToBooksFolder, FOLLOW_LINKS).
+                     map(path -> new File(path.toString()))
+                     .collect(Collectors.toList());
+-            System.out.println("(fetchBooks): velicina liste: " + filesInDirectory.size());
++            System.out.println("(fetchBooks): velicina liste: " + filesInDirectory.size() + ", racuna se i folder u kom se nalaze knjige");
+             filesInDirectory.forEach(file -> file.toString());
+ 
+ //            izbacujemo sve fajlove koji nisu u zadatom formatu, pretpostavka je da ce svi fajlovi bit u istom formatu: .wav
+Index: AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/util/ServerFinder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/util/ServerFinder.java b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/util/ServerFinder.java
+new file mode 100644
+--- /dev/null	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
++++ b/AudioBooks/peer/src/main/java/rs/ac/bg/fon/mmklab/peer/service/util/ServerFinder.java	(revision cc2aa14946619652aeb875b9fdb55723bfb1bb85)
+@@ -0,0 +1,16 @@
++package rs.ac.bg.fon.mmklab.peer.service.util;
++
++import java.net.InetAddress;
++import java.net.UnknownHostException;
++
++public class ServerFinder {
++
++    public static InetAddress getServerAddress() throws UnknownHostException {
++        return InetAddress.getByName("localhost");
++    }
++
++    public static int getServerPort(){
++        return 8000;
++    }
++
++}

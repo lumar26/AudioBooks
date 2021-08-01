@@ -32,7 +32,7 @@ public class AudioPlayerTab {
         });
 
         Button resumeBtn = new Button("Resume");
-        pauseBtn.setOnAction(action -> {
+        resumeBtn.setOnAction(action -> {
             Signaler signaler = new Signaler(Signal.RESUME, receiver);
             signaler.start();
         });

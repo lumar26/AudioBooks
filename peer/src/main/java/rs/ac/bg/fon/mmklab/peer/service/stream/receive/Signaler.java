@@ -21,18 +21,23 @@ public class Signaler extends Service<Signal> {
         return new Task() {
             @Override
             protected Object call() throws Exception {
-                System.out.println(">>   Pokrenuta je Signaler nit");
                 switch (signal) {
                     case TERMINATE: {
+                        System.out.println(">>   TERMINATE");
+
                         terminate();
                     }
                     break;
                     case PAUSE: {
+                        System.out.println(">>  PAUSE ");
 
+                        pause();
                     }
                     break;
                     case RESUME: {
+                        System.out.println(">>   RESUME");
 
+                        resume();
                     }
                     break;
                     default:
@@ -63,10 +68,16 @@ public class Signaler extends Service<Signal> {
             if (receiver.getFromSender().readLine().equals("Signal accepted")) {
                 System.out.println("Posiljalac prihvatio signal za pauzu");
             }
+            receiver.getToSender().println(receiver.getFramesRead());
         } catch (IOException e) {
 //            e.printStackTrace();
             System.err.println("Posiljalac nije prihvatio signal za pauzu");
         }
-        receiver.getSourceLine().close();
+//        receiver.getSourceLine().close();
+    }
+
+    private void resume(){
+        receiver.getToSender().println(Signal.RESUME);
+        System.out.println("POslat signal posiljaocu da nastavi slanje");
     }
 }
