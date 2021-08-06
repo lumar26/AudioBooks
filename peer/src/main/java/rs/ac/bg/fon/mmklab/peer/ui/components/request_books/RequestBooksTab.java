@@ -1,6 +1,8 @@
 package rs.ac.bg.fon.mmklab.peer.ui.components.request_books;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -8,6 +10,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import rs.ac.bg.fon.mmklab.book.AudioBook;
 import rs.ac.bg.fon.mmklab.communication.peer_to_server.ListExchanger;
 import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
@@ -28,7 +31,122 @@ public class RequestBooksTab {
         configuration = newConfiguration;
     }
 
-    public static void display(TabPane root) {
+    public static void display() {
+       BorderPane page2=new BorderPane();
+       BorderPane pom=new BorderPane();
+       BorderPane pom2=new BorderPane();
+        Button sendRequestBtn = new Button("Get available books");
+        VBox availableBooks = new VBox(5);
+        sendRequestBtn.setOnAction(action -> showAvailableBooks(availableBooks));
+
+//        stilizacija dugmeta
+        sendRequestBtn.setStyle("-fx-background-color: linear-gradient(lightgrey, gray ); -fx-text-fill:BLACK;-fx-font-weight: BOLD ");
+        DropShadow shadow = new DropShadow();
+        sendRequestBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> sendRequestBtn.setEffect(shadow));
+        sendRequestBtn.addEventHandler(MouseEvent.MOUSE_EXITED, e -> sendRequestBtn.setEffect(null));
+
+        pom.setCenter(sendRequestBtn);
+        pom2.setCenter(availableBooks);
+        page2.setTop(pom);
+        page2.setCenter(pom2);
+        page2.setPadding(new Insets(30,0,0,0));
+
+
+
+
+        Button pomDugme=new Button("audio player");
+        pomDugme.setOnAction(e-> AudioPlayer.display());
+        page2.setBottom(pomDugme);
+
+      Scene scene = new Scene(page2, 600, 300);
+        Stage primaryStage=new Stage();
+        primaryStage.setHeight(550);
+        primaryStage.setWidth(600);
+        primaryStage.setScene(scene);
+        primaryStage.showAndWait();
+
+
+
+/*
+        Tab requestBooksTab = new Tab();
+        TabDesign design=new TabDesign();
+        design.configureTab(requestBooksTab,"Available books");
+
+        requestBooksTab.setContent(page2);
+        if (requestBooksTab.isSelected()) {
+//            ako je fajl selektovan da odradimo da se automatski azurira lista knjiga
+        }
+*/
+
+
+    }
+
+    private static void showAvailableBooks(VBox availableBooks) {
+        List<AudioBook> list = null;
+        if (configuration == null) {
+            System.err.println("Korisnik jos uvek nije odradio nikakvu konfiguraciju pa je nemoguce povuci listu knjiga sa servera");
+            return;
+        }
+        try {
+            ServerCommunicator communicator = ServerCommunicator
+                    .getInstance(InetAddress.getByName(configuration.getServerName()), configuration.getServerPort());
+            list = ListExchanger.getAvailableBooks(communicator.getStreamFromServer(), communicator.getStreamToServer());
+            System.out.println();
+            System.out.println(">>>> Dobili smo listu knjiga <<<<<<<<");
+        } catch (IOException e) {
+//            e.printStackTrace();
+            System.err.println("Greska: nepoznat server");
+        }
+        if (list != null) {
+            availableBooks.getChildren().removeAll();
+            System.out.println();
+            System.out.println(">>> Lista nije null <<<");
+            list.forEach(book -> {
+                Button bookBtn = new Button(book.getBookInfo().getAuthor() + " - " + book.getBookInfo().getTitle());
+                bookBtn.setStyle("-fx-background-color: #8abec6; -fx-text-fill:BLACK; ");
+                DropShadow shadow = new DropShadow();
+                bookBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent e) {
+                        bookBtn.setEffect(shadow);
+                    }
+                });
+
+                bookBtn.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent e) {
+                        bookBtn.setEffect(null);
+                    }
+                });
+                availableBooks.getChildren().add(bookBtn);
+                bookBtn.setPrefWidth(500);
+                bookBtn.setOnAction(e -> {
+                    try {
+                        Receiver receiver = Receiver.createInstance(book, configuration);
+                        receiver.start();
+                        AudioPlayer.setReceiver(receiver);
+                    } catch (IOException ioException) {
+//                        ioException.printStackTrace();
+                        System.err.println("Greska (RequestBookSTab -> showAvailableBooks -> request for book handler): pri pokretanju Receiver niti je doslo do greske");
+
+                    } catch (LineUnavailableException lineUnavailableException) {
+//                        lineUnavailableException.printStackTrace();
+                        System.err.println("(booksBtn.setOnAction): prilikom kreiranja REceiverInstance nije se mogla otvoriti audio linija iz fajla");
+                    }
+                });
+            });
+        } else
+            System.err.println("Greska (RequestBooksTab -> showAvailableBooks): Lista nije popunjena, ostala je null");
+    }
+
+
+
+
+
+
+
+
+  /*  public static void display(TabPane root) {
         BorderPane requestBooksTabContent = new BorderPane();
         Button sendRequestBtn = new Button("Get available books");
         VBox availableBooks = new VBox(5);
@@ -111,5 +229,5 @@ public class RequestBooksTab {
             System.err.println("Greska (RequestBooksTab -> showAvailableBooks): Lista nije popunjena, ostala je null");
     }
 
-
+*/
 }

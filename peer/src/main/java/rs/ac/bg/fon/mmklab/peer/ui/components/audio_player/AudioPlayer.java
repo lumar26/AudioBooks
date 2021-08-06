@@ -4,10 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import rs.ac.bg.fon.mmklab.peer.service.stream.Signal;
@@ -33,20 +30,27 @@ public class AudioPlayer extends BorderPane {
         Stage primaryStage = new Stage();
         primaryStage.initModality(Modality.APPLICATION_MODAL);
         primaryStage.setTitle("Audio Player");
-        BorderPane borderPane = new BorderPane();
 
-       /* Image img=new Image("../images/user-profile.png");
-        ImageView imageView=new ImageView(img);
-        borderPane.setCenter(imageView);
-*/
-
+        HBox buttonBar=new HBox();
         HBox mediaBar = new HBox();
         mediaBar.setAlignment(Pos.CENTER);
-        mediaBar.setPadding(new Insets(135, 10, 10, 10));
-        mediaBar.setStyle("-fx-background-color:WhiteSmoke; -fx-font-family:'Baskerville Old Face'; -fx-font-size: 11; ");
-        borderPane.setBottom(mediaBar);
+        buttonBar.setAlignment(Pos.CENTER);
 
-        final Button playButton = new Button(">");
+        VBox vbox=new VBox();
+        vbox.getChildren().addAll(buttonBar,mediaBar);
+        vbox.setPadding(new Insets(15, 10, 10, 10));
+        vbox.setSpacing(12);
+        vbox.setStyle("-fx-background-color:#76a3aa; -fx-font-family:'Times New Roman'; ");
+
+        final Button playButton = new Button(" >>");
+        final Button pauseButton = new Button("  ||  ");
+        Label space = new Label("    ");
+
+
+        playButton.setStyle("-fx-background-color:#76a3aa; -fx-text-fill: Black;-fx-font-weight: BOLD; -fx-font-size: 13; -fx-border-style: solid; -fx-border-radius: 25; ");
+        pauseButton.setStyle("-fx-background-color:#76a3aa;-fx-text-fill: Black;-fx-font-weight: BOLD; -fx-font-size: 13; -fx-border-style: solid; -fx-border-radius: 25;");
+        buttonBar.getChildren().addAll(playButton,space,pauseButton);
+
 
 //        ponasanje
         playButton.setOnAction(click -> {
@@ -71,13 +75,9 @@ public class AudioPlayer extends BorderPane {
 
         });
 
-//        stilizacija
-        playButton.setPadding(new Insets(5, 5, 5, 5));
-        playButton.setStyle("-fx-background-color: Gray; -fx-text-fill: WhiteSmoke; -fx-border-style: none;");
-        mediaBar.getChildren().add(playButton);
 
-        Label space = new Label("    ");
-        mediaBar.getChildren().add(space);
+
+
 
         Label timeLabel = new Label("Time: ");
         mediaBar.getChildren().add(timeLabel);
@@ -88,12 +88,7 @@ public class AudioPlayer extends BorderPane {
         timeSlider.setMaxWidth(Double.MAX_VALUE);
         mediaBar.getChildren().add(timeSlider);
 
-       /* playTime = new Label();
-        playTime.setPrefWidth(110);
-        playTime.setMinWidth(50);
-        mediaBar.getChildren().add(playTime);*/
-        Label space1 = new Label("    ");
-        mediaBar.getChildren().add(space1);
+
 
         Label volumeLabel = new Label("Vol: ");
         mediaBar.getChildren().add(volumeLabel);
@@ -104,7 +99,7 @@ public class AudioPlayer extends BorderPane {
         volumeSlider.setMinWidth(30);
         mediaBar.getChildren().add(volumeSlider);
 
-        Scene scene = new Scene(borderPane, 600, 300);
+        Scene scene = new Scene(vbox, 450, 110);
         primaryStage.setScene(scene);
         primaryStage.showAndWait();
     }

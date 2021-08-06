@@ -3,6 +3,7 @@ package rs.ac.bg.fon.mmklab.peer.ui;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import rs.ac.bg.fon.mmklab.peer.ui.components.audio_player.AudioPlayer;
 import rs.ac.bg.fon.mmklab.peer.ui.components.configure.ConfigurationTab;
@@ -25,26 +26,22 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
 
-        TabPane root = new TabPane();
-        root.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); //korisnik nema mogucnost da sam zatvara tabove
-
-
-
+      //  TabPane root = new TabPane();
+       // root.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); //korisnik nema mogucnost da sam zatvara tabove
 //        dodavanje tabova na TabPane
-        ConfigurationTab.display(root);
-        RequestBooksTab.display(root);
+//        ConfigurationTab.display(root);
+        //RequestBooksTab.display(root);
 //        AudioPlayer.display(root);
 
-        root.setStyle("-fx-background-color:WhiteSmoke; -fx-font-family:'Baskerville Old Face'; -fx-font-size: 16; " );
 
+        BorderPane root=ConfigurationTab.display();
 
         primaryStage.setTitle("Audio Books");
-        primaryStage.setWidth(680);
-        primaryStage.setHeight(700);
+        primaryStage.setWidth(600);
+        primaryStage.setHeight(550);
         Scene scene=new Scene(root);
 
         primaryStage.setScene(scene);
-
         primaryStage.show();
     }
 
