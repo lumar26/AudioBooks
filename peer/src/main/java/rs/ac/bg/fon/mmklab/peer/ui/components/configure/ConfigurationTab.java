@@ -1,6 +1,11 @@
 package rs.ac.bg.fon.mmklab.peer.ui.components.configure;
 
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import rs.ac.bg.fon.mmklab.communication.peer_to_server.ListExchanger;
@@ -9,6 +14,7 @@ import rs.ac.bg.fon.mmklab.peer.service.config_service.ConfigurationService;
 import rs.ac.bg.fon.mmklab.peer.service.server_communication.ServerCommunicator;
 import rs.ac.bg.fon.mmklab.peer.service.stream.send.Sender;
 import rs.ac.bg.fon.mmklab.peer.service.util.BooksFinder;
+import rs.ac.bg.fon.mmklab.peer.ui.components.design.TabDesign;
 import rs.ac.bg.fon.mmklab.peer.ui.components.request_books.RequestBooksTab;
 
 import java.io.IOException;
@@ -22,12 +28,14 @@ public class ConfigurationTab {
     public static void display(TabPane root) {
         Tab configTab = new Tab();
         configTab.setText("Enter configurations");
+        TabDesign design=new TabDesign();
+        design.configureTab(configTab,"Enter configurations");
 
         Label localPortTCP = new Label("Unesite lokalni broj porta za tcp vezu");
         TextField localPortTCPTxt = new TextField();
-        Label localPortUDP = new Label("Unesite lokalni broj porta za tcp vezu");
+        Label localPortUDP = new Label("Unesite lokalni broj porta za udp vezu");
         TextField localPortUDPTxt = new TextField();
-        Label pathToFolder = new Label("Unesite Putanju do fascikle gde se nalaze audio knjige: ");
+        Label pathToFolder = new Label("Unesite putanju do fascikle gde se nalaze audio knjige: ");
         TextField pathToFolderTxt = new TextField();
         pathToFolderTxt.setText("/home/lumar26/Public/AudioBooks");
 
@@ -40,6 +48,24 @@ public class ConfigurationTab {
 
 //        Submit dugme
         Button submitBtn = new Button("Potvrdi");
+
+        submitBtn.setStyle("-fx-background-color: Gray; -fx-text-fill: WhiteSmoke ");
+        DropShadow shadow = new DropShadow();
+
+        submitBtn.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                submitBtn.setEffect(shadow);
+            }
+        });
+
+        submitBtn.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                submitBtn.setEffect(null);
+            }
+        });
+
         submitBtn.setOnAction(a -> {
             configuration = configurationFactory(localPortTCPTxt, localPortUDPTxt, pathToFolderTxt);
             RequestBooksTab.updaTeConfiguration(configuration); // svaki put kad dodje do promene u knfiguraciji ona mora da se apdejtuje
@@ -52,8 +78,22 @@ public class ConfigurationTab {
 
 
         HBox configLayout = new HBox();
-        configLayout.getChildren().addAll(labels, textFields, submitBtn);
-        configTab.setContent(configLayout);
+        configLayout.setPadding(new Insets(80,30,0,30));
+        configLayout.getChildren().addAll(labels, textFields);
+
+//        configLayout.getChildren().addAll(labels, textFields);
+//        configLayout.getChildren().addAll(labels, textFields, submitBtn);
+//        configTab.setContent(configLayout);
+
+        BorderPane configpage=new BorderPane();
+        configpage.setCenter(configLayout);
+        BorderPane configpage1=new BorderPane();
+        configpage1.setRight(submitBtn);
+        configpage.setBottom(configpage1);
+
+        configpage.setPadding(new Insets(0,50,350,50));
+
+        configTab.setContent(configpage);
 
 //        dodavanje korenom elementu
         root.getTabs().add(configTab);

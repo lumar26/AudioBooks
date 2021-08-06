@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import rs.ac.bg.fon.mmklab.peer.ui.components.audio_player.AudioPlayerTab;
+import rs.ac.bg.fon.mmklab.peer.ui.components.audio_player.AudioPlayer;
 import rs.ac.bg.fon.mmklab.peer.ui.components.configure.ConfigurationTab;
 import rs.ac.bg.fon.mmklab.peer.ui.components.request_books.RequestBooksTab;
 import rs.ac.bg.fon.mmklab.peer.domain.Configuration;
@@ -33,11 +33,18 @@ public class Main extends Application {
 //        dodavanje tabova na TabPane
         ConfigurationTab.display(root);
         RequestBooksTab.display(root);
-        AudioPlayerTab.display(root);
+//        AudioPlayer.display(root);
+
+        root.setStyle("-fx-background-color:WhiteSmoke; -fx-font-family:'Baskerville Old Face'; -fx-font-size: 16; " );
+
 
         primaryStage.setTitle("Audio Books");
-        primaryStage.setWidth(700);
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setWidth(680);
+        primaryStage.setHeight(700);
+        Scene scene=new Scene(root);
+
+        primaryStage.setScene(scene);
+
         primaryStage.show();
     }
 
